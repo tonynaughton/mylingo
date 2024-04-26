@@ -1,3 +1,11 @@
+import { ChakraProvider } from "@chakra-ui/react";
+
+import Home from "./pages/home";
+
 export default function App() {
-  return <h1>mylingo</h1>;
+  return (
+    <ChakraProvider>
+      <Home />
+    </ChakraProvider>
+  );
 }
