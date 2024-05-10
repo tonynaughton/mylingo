@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Container, Flex, Heading, Link, VStack, Text } from "@chakra-ui/react";
+import { Container, Flex, Heading, Link, VStack, Text, Button } from "@chakra-ui/react";
+import { signOut } from "firebase/auth";
 
 import Login from "./components/login";
 import Register from "./components/register";
@@ -37,7 +38,7 @@ export default function App() {
   return (
     <Container maxW="container.sm">
       <Flex h="100vh" py={20}>
-        {currentUser ? <div></div> : renderAuthForm()}
+        {currentUser ? <Button onClick={() => signOut(auth)}>Logout</Button> : renderAuthForm()}
       </Flex>
     </Container>
   );

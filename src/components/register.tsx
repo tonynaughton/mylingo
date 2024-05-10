@@ -1,4 +1,4 @@
-import { VStack, FormControl, FormLabel, Input, Button, FormErrorMessage } from "@chakra-ui/react";
+import { VStack, FormControl, FormLabel, Input, Button, FormErrorMessage, useToast } from "@chakra-ui/react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useForm } from "react-hook-form";
 
@@ -12,6 +12,7 @@ interface FormInput {
 }
 
 export default function Register(): JSX.Element {
+  const toast = useToast();
   const {
     handleSubmit,
     register,
@@ -22,8 +23,20 @@ export default function Register(): JSX.Element {
     const { email, password } = data;
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-    } catch (err) {
-      console.log("Error registering: " + err);
+      toast({
+        title: "Registration successful",
+        status: "success",
+        duration: 5000,
+        isClosable: true
+      });
+    } catch (err: any) {
+      toast({
+        title: "Registration failed",
+        description: err.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true
+      });
     }
   };
 
