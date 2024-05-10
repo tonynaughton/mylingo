@@ -1,6 +1,15 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore/lite";
-import { getAuth } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { getFirestore, CollectionReference, DocumentData, addDoc, collection } from "firebase/firestore";
+
+import { RegisterFormInput } from "../components/register";
+
+export interface UserData {
+  uid: string;
+  name: string;
+  email: string;
+  createdAt: number;
+}
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -15,3 +24,21 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+export const createCollection = <T = DocumentData>(collectionName: string) => {
+  return collection(db, collectionName) as CollectionReference<T>;
+};
+
+export const usersCollection = createCollection<UserData>("users");
+
+export async function registerUser({ name, email, password }: RegisterFormInput): Promise<void> {
+  const {
+    user: { uid }
+  } = await createUserWithEmailAndPassword(auth, email, password);
+  await addDoc(usersCollection, {
+    uid,
+    name,
+    email,
+    createdAt: Date.now()
+  });
+}
