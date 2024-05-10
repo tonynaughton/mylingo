@@ -41,6 +41,7 @@ export default function Login(): JSX.Element {
         duration: 5000,
         isClosable: true
       });
+      navigate("/");
     } catch (err: any) {
       toast({
         title: "Login failed",

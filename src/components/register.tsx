@@ -41,6 +41,7 @@ export default function Register(): JSX.Element {
         duration: 5000,
         isClosable: true
       });
+      navigate("/");
     } catch (err: any) {
       toast({
         title: "Registration failed",
