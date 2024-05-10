@@ -36,6 +36,7 @@ export default function Register(): JSX.Element {
             })}
           />
         </FormControl>
+        <FormErrorMessage>{errors.name ? errors.name.message : ""}</FormErrorMessage>
         <FormControl isInvalid={!!errors.email}>
           <FormLabel htmlFor="email">Email</FormLabel>
           <Input
@@ -45,10 +46,12 @@ export default function Register(): JSX.Element {
             {...register("email", { required: "This is required" })}
           />
         </FormControl>
+        <FormErrorMessage>{errors.email ? errors.email.message : ""}</FormErrorMessage>
         <FormControl isInvalid={!!errors.password}>
           <FormLabel htmlFor="password">Password</FormLabel>
           <Input autoComplete="password" type="password" {...register("password", { required: "This is required" })} />
         </FormControl>
+        <FormErrorMessage>{errors.password ? errors.password.message : ""}</FormErrorMessage>
         <FormControl isInvalid={!!errors.repeatPassword}>
           <FormLabel htmlFor="repeat-password">Repeat Password</FormLabel>
           <Input
@@ -57,7 +60,7 @@ export default function Register(): JSX.Element {
             {...register("repeatPassword", { required: "This is required" })}
           />
         </FormControl>
-        <FormErrorMessage>{errors.name ? errors.name.message : ""}</FormErrorMessage>
+        <FormErrorMessage>{errors.repeatPassword ? errors.repeatPassword.message : ""}</FormErrorMessage>
         <Button w="full" size="lg" isLoading={isSubmitting} type="submit">
           Register
         </Button>
