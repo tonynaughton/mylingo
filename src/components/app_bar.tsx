@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Heading, IconButton, MenuButton, Menu, MenuList, MenuItem } from "@chakra-ui/react";
+import { Box, Flex, Heading, IconButton, MenuButton, Menu, MenuList, MenuItem } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { signOut } from "firebase/auth";
 
@@ -17,9 +17,9 @@ export function AppBar(): JSX.Element {
             </MenuItem>
           </MenuList>
         </Menu>
-        <Text fontSize="xl" color="black">
-          <Heading>mylingo</Heading>
-        </Text>
+        <Heading fontSize="xl" color="black">
+          mylingo
+        </Heading>
       </Flex>
     </Box>
   );
