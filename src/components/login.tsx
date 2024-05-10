@@ -18,7 +18,11 @@ export default function Login(): JSX.Element {
 
   const onLogin = async (data: FormInput): Promise<void> => {
     const { email, password } = data;
-    await signInWithEmailAndPassword(auth, email, password);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (err) {
+      console.log("Error logging in: " + err);
+    }
   };
 
   return (

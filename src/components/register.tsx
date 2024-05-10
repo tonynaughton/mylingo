@@ -20,7 +20,11 @@ export default function Register(): JSX.Element {
 
   const onRegister = async (data: FormInput): Promise<void> => {
     const { email, password } = data;
-    await createUserWithEmailAndPassword(auth, email, password);
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } catch (err) {
+      console.log("Error registering: " + err);
+    }
   };
 
   return (
