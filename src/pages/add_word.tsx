@@ -14,12 +14,14 @@ export function AddWord(): JSX.Element {
   const {
     handleSubmit,
     register,
+    reset,
     formState: { errors, isSubmitting }
   } = useForm<AddWordInput>();
 
   async function onAddWord(wordData: AddWordInput) {
     try {
       await addSavedWord(wordData);
+      reset();
       toast({
         title: "Word saved successfully",
         status: "success",
