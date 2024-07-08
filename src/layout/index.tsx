@@ -1,12 +1,14 @@
-import { VStack, Container, Flex } from "@chakra-ui/react";
+import { Container, Flex } from "@chakra-ui/react";
+import { AppBar } from "../components/app_bar";
 
 export function Layout({ children }: { children: JSX.Element }): JSX.Element {
   return (
     <Container maxW="md">
-      <Flex h="100vh" justifyContent="center" alignItems="center">
-        <VStack w="full" h="fit-content" spacing={3}>
+      <Flex h="100vh" flexDirection="column" justifyContent="center" alignItems="center">
+        <AppBar />
+        <Flex flex="1" flexDirection="column" justifyContent="center" alignItems="center">
           {children}
-        </VStack>
+        </Flex>
       </Flex>
     </Container>
   );

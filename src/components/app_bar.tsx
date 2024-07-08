@@ -6,7 +6,7 @@ import { auth } from "../firebase";
 
 export function AppBar(): JSX.Element {
   return (
-    <Box color="white" p={4}>
+    <Box color="white" p={4} w="full">
       <Flex justify="space-between" align="center">
         <Menu>
           <MenuButton as={IconButton} aria-label="Menu" icon={<HamburgerIcon />} />

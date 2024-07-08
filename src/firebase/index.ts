@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { getFirestore, CollectionReference, DocumentData, addDoc, collection } from "firebase/firestore";
 
-import { RegisterFormInput } from "../components/register";
+import { RegisterFormInput } from "../pages/register";
 
 export interface UserData {
   uid: string;

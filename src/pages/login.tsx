@@ -6,37 +6,37 @@ import {
   Button,
   FormErrorMessage,
   useToast,
-  Link,
   Heading,
-  Text
+  Text,
+  Link
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
-import { registerUser } from "../firebase";
+import { auth } from "../firebase";
 import { Layout } from "../layout";
 
-export interface RegisterFormInput {
-  name: string;
+interface FormInput {
   email: string;
   password: string;
-  repeatPassword: string;
 }
 
-export default function Register(): JSX.Element {
+export function Login(): JSX.Element {
   const toast = useToast();
   const navigate = useNavigate();
   const {
     handleSubmit,
     register,
     formState: { errors, isSubmitting }
-  } = useForm<RegisterFormInput>();
+  } = useForm<FormInput>();
 
-  const onRegister = async (data: RegisterFormInput): Promise<void> => {
+  const onLogin = async (data: FormInput): Promise<void> => {
+    const { email, password } = data;
     try {
-      await registerUser(data);
+      await signInWithEmailAndPassword(auth, email, password);
       toast({
-        title: "Registration successful",
+        title: "Login successful",
         status: "success",
         duration: 5000,
         isClosable: true
@@ -44,7 +44,7 @@ export default function Register(): JSX.Element {
       navigate("/");
     } catch (err: any) {
       toast({
-        title: "Registration failed",
+        title: "Login failed",
         description: err.message,
         status: "error",
         duration: 5000,
@@ -55,22 +55,11 @@ export default function Register(): JSX.Element {
 
   return (
     <Layout>
-      <>
-        <Heading>mylingo</Heading>
+      <VStack spacing={5}>
+        <Heading>Welcome</Heading>
         <Text>Please login or register to continue</Text>
-        <form onSubmit={handleSubmit(onRegister)} style={{ width: "100%" }}>
+        <form onSubmit={handleSubmit(onLogin)} style={{ width: "100%" }}>
           <VStack w="full" spacing={3}>
-            <FormControl isInvalid={!!errors.name}>
-              <FormLabel htmlFor="name">Name</FormLabel>
-              <Input
-                id="name"
-                {...register("name", {
-                  required: "This is required",
-                  minLength: { value: 4, message: "Minimum length should be 4" }
-                })}
-              />
-            </FormControl>
-            <FormErrorMessage>{errors.name ? errors.name.message : ""}</FormErrorMessage>
             <FormControl isInvalid={!!errors.email}>
               <FormLabel htmlFor="email">Email</FormLabel>
               <Input
@@ -90,22 +79,13 @@ export default function Register(): JSX.Element {
               />
             </FormControl>
             <FormErrorMessage>{errors.password ? errors.password.message : ""}</FormErrorMessage>
-            <FormControl isInvalid={!!errors.repeatPassword}>
-              <FormLabel htmlFor="repeat-password">Repeat Password</FormLabel>
-              <Input
-                autoComplete="repeat-password"
-                type="password"
-                {...register("repeatPassword", { required: "This is required" })}
-              />
-            </FormControl>
-            <FormErrorMessage>{errors.repeatPassword ? errors.repeatPassword.message : ""}</FormErrorMessage>
             <Button w="full" size="lg" isLoading={isSubmitting} type="submit">
-              Register
+              Login
             </Button>
           </VStack>
         </form>
-        <Link onClick={() => navigate("/login")}>Already have an account? Click here to login.</Link>
-      </>
+        <Link onClick={() => navigate("/register")}>Don't have an account? Click here to register.</Link>
+      </VStack>
     </Layout>
   );
 }
