@@ -1,6 +1,17 @@
 import { initializeApp } from "firebase/app";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
-import { getFirestore, CollectionReference, DocumentData, addDoc, collection } from "firebase/firestore";
+import {
+  getFirestore,
+  CollectionReference,
+  DocumentData,
+  addDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc
+} from "firebase/firestore";
 
 import { RegisterFormInput } from "../pages/register";
 
@@ -9,6 +20,7 @@ export interface UserData {
   name: string;
   email: string;
   createdAt: number;
+  savedWords: string[];
 }
 
 const firebaseConfig = {
@@ -39,6 +51,29 @@ export async function registerUser({ name, email, password }: RegisterFormInput)
     uid,
     name,
     email,
-    createdAt: Date.now()
+    createdAt: Date.now(),
+    savedWords: []
   });
+}
+
+export async function getSavedWords(): Promise<string[]> {
+  const { currentUser } = auth;
+
+  if (!currentUser) {
+    throw new Error("No user logged in");
+  }
+
+  const userQuery = query(usersCollection, where("uid", "==", currentUser.uid));
+  const { docs } = await getDocs(userQuery);
+
+  if (!docs.length) {
+    throw new Error("User not found");
+  }
+
+  const userId = docs[0].id;
+  const userRef = doc(db, "users", userId);
+  const userDoc = await getDoc(userRef);
+  const userData = userDoc.data() as UserData;
+
+  return userData.savedWords;
 }
