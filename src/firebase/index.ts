@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, User } from "firebase/auth";
 import {
   getFirestore,
   CollectionReference,
@@ -10,17 +10,24 @@ import {
   where,
   getDocs,
   doc,
-  getDoc
+  getDoc,
+  DocumentReference,
+  updateDoc
 } from "firebase/firestore";
 
 import { RegisterFormInput } from "../pages/register";
+
+export interface WordData {
+  spanish: string;
+  english: string;
+}
 
 export interface UserData {
   uid: string;
   name: string;
   email: string;
   createdAt: number;
-  savedWords: string[];
+  savedWords: WordData[];
 }
 
 const firebaseConfig = {
@@ -56,14 +63,8 @@ export async function registerUser({ name, email, password }: RegisterFormInput)
   });
 }
 
-export async function getSavedWords(): Promise<string[]> {
-  const { currentUser } = auth;
-
-  if (!currentUser) {
-    throw new Error("No user logged in");
-  }
-
-  const userQuery = query(usersCollection, where("uid", "==", currentUser.uid));
+export async function getUserRef(user: User): Promise<DocumentReference<DocumentData>> {
+  const userQuery = query(usersCollection, where("uid", "==", user.uid));
   const { docs } = await getDocs(userQuery);
 
   if (!docs.length) {
@@ -71,7 +72,36 @@ export async function getSavedWords(): Promise<string[]> {
   }
 
   const userId = docs[0].id;
-  const userRef = doc(db, "users", userId);
+  return doc(db, "users", userId);
+}
+
+export async function addSavedWord(wordData: WordData): Promise<void> {
+  const { currentUser } = auth;
+
+  if (!currentUser) {
+    throw new Error("No user logged in");
+  }
+
+  const userRef = await getUserRef(currentUser);
+
+  const userDoc = await getDoc(userRef);
+  const userData = userDoc.data() as UserData;
+
+  const savedWords = userData.savedWords;
+  savedWords.push(wordData);
+
+  await updateDoc(userRef, { savedWords });
+}
+
+export async function getSavedWords(): Promise<WordData[]> {
+  const { currentUser } = auth;
+
+  if (!currentUser) {
+    throw new Error("No user logged in");
+  }
+
+  const userRef = await getUserRef(currentUser);
+
   const userDoc = await getDoc(userRef);
   const userData = userDoc.data() as UserData;
 
