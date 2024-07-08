@@ -3,6 +3,7 @@ import { Button, Heading, Input, Spinner, Text, useToast, VStack } from "@chakra
 
 import { getSavedWords, WordData } from "../firebase";
 import { useForm } from "react-hook-form";
+import { Layout } from "../layout";
 
 export function WordCard(): JSX.Element {
   const toast = useToast();
@@ -46,10 +47,12 @@ export function WordCard(): JSX.Element {
 
   if (isLoading) {
     return (
-      <VStack spacing={5}>
-        <Text>Fetching saved words...</Text>
-        <Spinner size="xl" />
-      </VStack>
+      <Layout>
+        <VStack spacing={5}>
+          <Text>Fetching saved words...</Text>
+          <Spinner size="xl" />
+        </VStack>
+      </Layout>
     );
   }
 

@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import { Home, Login, Register } from "../pages";
+import { Home, Login, Register, AddWord, MyWords } from "../pages";
 import { ProtectedRoute } from "./protected_route";
 import { auth } from "../firebase";
-import { AddWord } from "../pages/add_word";
 
 export function Router(): JSX.Element {
   const [currentUser, setCurrentUser] = useState(auth.currentUser);
@@ -39,6 +38,14 @@ export function Router(): JSX.Element {
       element: (
         <ProtectedRoute user={currentUser}>
           <AddWord />
+        </ProtectedRoute>
+      )
+    },
+    {
+      path: "/my-words",
+      element: (
+        <ProtectedRoute user={currentUser}>
+          <MyWords />
         </ProtectedRoute>
       )
     },
