@@ -4,10 +4,10 @@ import { Button, Input, VStack, Heading, FormControl, FormLabel, FormErrorMessag
 import { Layout } from "../layout";
 import { addSavedWord } from "../firebase";
 
-interface AddWordInput {
+type FormInput = {
   spanish: string;
   english: string;
-}
+};
 
 export function AddWord(): JSX.Element {
   const toast = useToast();
@@ -16,28 +16,17 @@ export function AddWord(): JSX.Element {
     register,
     reset,
     formState: { errors, isSubmitting }
-  } = useForm<AddWordInput>();
+  } = useForm<FormInput>();
 
-  async function onAddWord(wordData: AddWordInput) {
+  const onAddWord = async (wordData: FormInput): Promise<void> => {
     try {
       await addSavedWord(wordData);
+      toast({ title: "Word saved successfully", status: "success" });
       reset();
-      toast({
-        title: "Word saved successfully",
-        status: "success",
-        duration: 5000,
-        isClosable: true
-      });
     } catch (err: any) {
-      toast({
-        title: "Failed to save word",
-        description: err.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true
-      });
+      toast({ title: "Failed to save word", description: err.message, status: "error" });
     }
-  }
+  };
 
   return (
     <Layout>
@@ -54,7 +43,7 @@ export function AddWord(): JSX.Element {
             <Input id="english-word" {...register("english", { required: "This is required" })} />
           </FormControl>
           <FormErrorMessage>{errors.english ? errors.english.message : ""}</FormErrorMessage>
-          <Button width="full" size="lg" isLoading={isSubmitting} type="submit">
+          <Button width="full" colorScheme="teal" size="lg" isLoading={isSubmitting} type="submit">
             Save
           </Button>
         </VStack>

@@ -1,8 +1,8 @@
+import { useEffect, useState } from "react";
 import { VStack, Text, Spinner, Heading, TableContainer, Table, Thead, Tr, Th, Tbody, Td } from "@chakra-ui/react";
 
 import { Layout } from "../layout";
 import { getSavedWords, WordData } from "../firebase";
-import { useEffect, useState } from "react";
 
 export function MyWords(): JSX.Element {
   const [isLoading, setIsLoading] = useState(true);
@@ -32,27 +32,27 @@ export function MyWords(): JSX.Element {
 
   return (
     <Layout>
-      <>
-        <Heading my={4}>My Words</Heading>
-        <TableContainer width="full">
-          <Table width="full" variant="simple">
-            <Thead>
-              <Tr>
-                <Th>English</Th>
-                <Th>Spanish</Th>
+      <VStack spacing={5}  height='full' width="full">
+      <Heading as="h2" size="lg">My Words</Heading>
+      <TableContainer width="full" height="full" overflowY="auto">
+        <Table width="full" variant="simple" height="full" >
+          <Thead>
+            <Tr>
+              <Th>English</Th>
+              <Th>Spanish</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {savedWords.map((word, key) => (
+              <Tr key={key}>
+                <Td>{word.english}</Td>
+                <Td>{word.spanish}</Td>
               </Tr>
-            </Thead>
-            <Tbody>
-              {savedWords.map((word) => (
-                <Tr>
-                  <Td>{word.english}</Td>
-                  <Td>{word.spanish}</Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </TableContainer>
-      </>
+            ))}
+          </Tbody>
+        </Table>
+      </TableContainer>
+      </VStack>
     </Layout>
   );
 }
