@@ -32,12 +32,12 @@ export function MyWords(): JSX.Element {
 
   return (
     <Layout>
-      <VStack spacing={5} height="full" width="full">
+      <VStack spacing={5} maxHeight="100%" width="full">
         <Heading as="h2" size="lg">
           My Words
         </Heading>
-        <TableContainer width="full" height="full" overflowY="auto">
-          <Table width="full" variant="simple" height="full">
+        <TableContainer width="full" overflowY="auto">
+          <Table width="full" variant="simple">
             <Thead>
               <Tr>
                 <Th>English</Th>

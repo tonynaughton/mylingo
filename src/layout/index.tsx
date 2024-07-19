@@ -12,7 +12,7 @@ export function Layout({ children }: { children: JSX.Element }): JSX.Element {
           flexDirection="column"
           justifyContent="center"
           alignItems="center"
-          overflow="scroll"
+          overflow="auto"
         >
           {children}
         </Flex>
