@@ -17,10 +17,10 @@ import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { Layout } from "../layout";
 
-interface FormInput {
+type FormInput = {
   email: string;
   password: string;
-}
+};
 
 export function Login(): JSX.Element {
   const toast = useToast();
@@ -31,25 +31,13 @@ export function Login(): JSX.Element {
     formState: { errors, isSubmitting }
   } = useForm<FormInput>();
 
-  const onLogin = async (data: FormInput): Promise<void> => {
-    const { email, password } = data;
+  const onLogin = async ({ email, password }: FormInput): Promise<void> => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      toast({
-        title: "Login successful",
-        status: "success",
-        duration: 5000,
-        isClosable: true
-      });
+      toast({ title: "Login successful", status: "success" });
       navigate("/");
     } catch (err: any) {
-      toast({
-        title: "Login failed",
-        description: err.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true
-      });
+      toast({ title: "Login failed", description: err.message, status: "error" });
     }
   };
 
