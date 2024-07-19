@@ -32,26 +32,28 @@ export function MyWords(): JSX.Element {
 
   return (
     <Layout>
-      <VStack spacing={5}  height='full' width="full">
-      <Heading as="h2" size="lg">My Words</Heading>
-      <TableContainer width="full" height="full" overflowY="auto">
-        <Table width="full" variant="simple" height="full" >
-          <Thead>
-            <Tr>
-              <Th>English</Th>
-              <Th>Spanish</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {savedWords.map((word, key) => (
-              <Tr key={key}>
-                <Td>{word.english}</Td>
-                <Td>{word.spanish}</Td>
+      <VStack spacing={5} height="full" width="full">
+        <Heading as="h2" size="lg">
+          My Words
+        </Heading>
+        <TableContainer width="full" height="full" overflowY="auto">
+          <Table width="full" variant="simple" height="full">
+            <Thead>
+              <Tr>
+                <Th>English</Th>
+                <Th>Spanish</Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
+            </Thead>
+            <Tbody>
+              {savedWords.map((word, key) => (
+                <Tr key={key}>
+                  <Td>{word.english}</Td>
+                  <Td>{word.spanish}</Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
       </VStack>
     </Layout>
   );

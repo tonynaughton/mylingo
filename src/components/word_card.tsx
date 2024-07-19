@@ -15,7 +15,7 @@ export function WordCard(): JSX.Element {
   const { handleSubmit, register, reset } = useForm<FormInput>();
 
   useEffect((): void => {
-     const getWords = async () => {
+    const getWords = async () => {
       const savedWords = await getSavedWords();
       setSavedWords(savedWords);
       setIsLoading(false);
@@ -41,10 +41,10 @@ export function WordCard(): JSX.Element {
       return;
     }
 
-    toast({ title: "Correct", status: "success"});
+    toast({ title: "Correct", status: "success" });
     reset();
-    setViewedWords(prev => ([...prev, activeWord!]));
-  }
+    setViewedWords((prev) => [...prev, activeWord!]);
+  };
 
   const onResetClick = (): void => setViewedWords([]);
 
@@ -61,11 +61,7 @@ export function WordCard(): JSX.Element {
     return (
       <VStack spacing={5}>
         <Heading>No words remaining!</Heading>
-        <Button
-          onClick={onResetClick}
-          size="lg"
-          width="full"
-        >
+        <Button onClick={onResetClick} size="lg" width="full">
           Reset
         </Button>
       </VStack>
