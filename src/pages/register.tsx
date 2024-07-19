@@ -96,7 +96,11 @@ export function Register(): JSX.Element {
             <FormErrorMessage>{errors.repeatPassword ? errors.repeatPassword.message : ""}</FormErrorMessage>
             <FormControl isInvalid={!!errors.nativeCode}>
               <FormLabel htmlFor="native-language">Native Language</FormLabel>
-              <Select {...register("nativeCode", { required: "This is required" })} id="native-language">
+              <Select
+                placeholder="Select a language"
+                {...register("nativeCode", { required: "This is required" })}
+                id="native-language"
+              >
                 {languages.map((language) => (
                   <option value={language.code}>{language.label}</option>
                 ))}
@@ -105,7 +109,12 @@ export function Register(): JSX.Element {
             <FormErrorMessage>{errors.nativeCode ? errors.nativeCode.message : ""}</FormErrorMessage>
             <FormControl isInvalid={!!errors.targetCode}>
               <FormLabel htmlFor="target-language">Target Language</FormLabel>
-              <Select {...register("targetCode", { required: "This is required" })} id="target-language">
+              <Select
+                placeholder="Select a language"
+                autoComplete=""
+                {...register("targetCode", { required: "This is required" })}
+                id="target-language"
+              >
                 {languages.map((language) => (
                   <option value={language.code}>{language.label}</option>
                 ))}
