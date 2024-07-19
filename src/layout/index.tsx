@@ -3,10 +3,11 @@ import { AppBar } from "../components/app_bar";
 
 export function Layout({ children }: { children: JSX.Element }): JSX.Element {
   return (
-    <Container maxW="md">
-      <Flex h="100vh" flexDirection="column" justifyContent="center" alignItems="center" py={5}>
-        <AppBar />
+    <Container maxW="md" h="100dvh">
+      <AppBar />
+      <Flex h="100%" flexDirection="column" justifyContent="center" alignItems="center">
         <Flex
+          py={5}
           width="full"
           flexGrow="1"
           flexDirection="column"

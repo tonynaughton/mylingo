@@ -52,7 +52,7 @@ export function AppBar(): JSX.Element {
   };
 
   return (
-    <Box color="white" p={4} w="full">
+    <Box color="white" p={4} w="full" position="absolute" top={0} left={0}>
       <Flex justify="space-between" align="center">
         <Menu>
           <MenuButton as={IconButton} aria-label="Menu" icon={<HamburgerIcon />} />
