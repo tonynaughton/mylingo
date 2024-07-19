@@ -3,6 +3,7 @@ import { Button, Heading, Input, Spinner, Text, useToast, VStack } from "@chakra
 import { useForm } from "react-hook-form";
 
 import { getSavedWords, WordData } from "../firebase";
+import { useNavigate } from "react-router-dom";
 
 type FormInput = { input: string };
 
@@ -12,6 +13,7 @@ export function TranslateCard(): JSX.Element {
   const [viewedWords, setViewedWords] = useState<WordData[]>([]);
   const [activeWord, setActiveWord] = useState<WordData | null>(null);
   const toast = useToast();
+  const navigate = useNavigate();
   const { handleSubmit, register, reset, setValue } = useForm<FormInput>();
 
   useEffect((): void => {
@@ -51,6 +53,8 @@ export function TranslateCard(): JSX.Element {
 
   const onRevealClick = (): void => setValue("input", activeWord!.target);
 
+  const onAddWordsClick = (): void => navigate("/add-word");
+
   if (isLoading) {
     return (
       <VStack spacing={5}>
@@ -60,10 +64,21 @@ export function TranslateCard(): JSX.Element {
     );
   }
 
+  if (!savedWords.length) {
+    return (
+      <VStack spacing={5}>
+        <Heading>No saved words</Heading>
+        <Button onClick={onAddWordsClick} size="lg" width="full">
+          Add Words
+        </Button>
+      </VStack>
+    );
+  }
+
   if (viewedWords.length >= savedWords.length) {
     return (
       <VStack spacing={5}>
-        <Heading>No words remaining!</Heading>
+        <Heading>No words remaining</Heading>
         <Button onClick={onResetClick} size="lg" width="full">
           Reset
         </Button>
