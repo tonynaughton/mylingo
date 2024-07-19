@@ -8,7 +8,8 @@ import {
   useToast,
   Link,
   Heading,
-  Text
+  Text,
+  Select
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -21,6 +22,8 @@ export interface RegisterFormInput {
   email: string;
   password: string;
   repeatPassword: string;
+  nativeLanguage: string;
+  targetLanguage: string;
 }
 
 export function Register(): JSX.Element {
@@ -35,27 +38,16 @@ export function Register(): JSX.Element {
   const onRegister = async (data: RegisterFormInput): Promise<void> => {
     try {
       await registerUser(data);
-      toast({
-        title: "Registration successful",
-        status: "success",
-        duration: 5000,
-        isClosable: true
-      });
+      toast({ title: "Registration successful", status: "success" });
       navigate("/");
     } catch (err: any) {
-      toast({
-        title: "Registration failed",
-        description: err.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true
-      });
+      toast({ title: "Registration failed", description: err.message, status: "error" });
     }
   };
 
   return (
     <Layout>
-      <VStack spacing={5}>
+      <VStack spacing={5} overflowY="auto">
         <Heading>Welcome</Heading>
         <Text>Please login or register to continue</Text>
         <form onSubmit={handleSubmit(onRegister)} style={{ width: "100%" }}>
@@ -87,6 +79,7 @@ export function Register(): JSX.Element {
                 autoComplete="password"
                 type="password"
                 {...register("password", { required: "This is required" })}
+                id="password"
               />
             </FormControl>
             <FormErrorMessage>{errors.password ? errors.password.message : ""}</FormErrorMessage>
@@ -96,9 +89,20 @@ export function Register(): JSX.Element {
                 autoComplete="repeat-password"
                 type="password"
                 {...register("repeatPassword", { required: "This is required" })}
+                id="repeat-password"
               />
             </FormControl>
             <FormErrorMessage>{errors.repeatPassword ? errors.repeatPassword.message : ""}</FormErrorMessage>
+            <FormControl isInvalid={!!errors.nativeLanguage}>
+              <FormLabel htmlFor="native-language">Native Language</FormLabel>
+              <Input {...register("nativeLanguage", { required: "This is required" })} id="native-language" />
+            </FormControl>
+            <FormErrorMessage>{errors.nativeLanguage ? errors.nativeLanguage.message : ""}</FormErrorMessage>
+            <FormControl isInvalid={!!errors.targetLanguage}>
+              <FormLabel htmlFor="target-language">Target Language</FormLabel>
+              <Input {...register("targetLanguage", { required: "This is required" })} id="target-language" />
+            </FormControl>
+            <FormErrorMessage>{errors.targetLanguage ? errors.targetLanguage.message : ""}</FormErrorMessage>
             <Button w="full" size="lg" isLoading={isSubmitting} type="submit">
               Register
             </Button>

@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { VStack, Text, Spinner, Heading, TableContainer, Table, Thead, Tr, Th, Tbody, Td } from "@chakra-ui/react";
 
 import { Layout } from "../layout";
-import { getSavedWords, WordData } from "../firebase";
+import { getLanguageData, getSavedWords, WordData } from "../firebase";
 
 export function MyWords(): JSX.Element {
-  const [isLoading, setIsLoading] = useState(true);
+  const [languageData, setLanguageData] = useState<WordData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [savedWords, setSavedWords] = useState<WordData[]>([]);
 
   useEffect(() => {
@@ -13,10 +14,13 @@ export function MyWords(): JSX.Element {
       const savedWords = await getSavedWords();
       setSavedWords(savedWords);
 
-      setIsLoading(false);
+      const data = await getLanguageData();
+      setLanguageData(data);
     }
 
+    setIsLoading(true);
     getData();
+    setIsLoading(false);
   }, []);
 
   if (isLoading) {
@@ -40,15 +44,15 @@ export function MyWords(): JSX.Element {
           <Table width="full" variant="simple">
             <Thead>
               <Tr>
-                <Th>English</Th>
-                <Th>Spanish</Th>
+                <Th>{languageData?.native}</Th>
+                <Th>{languageData?.target}</Th>
               </Tr>
             </Thead>
             <Tbody>
               {savedWords.map((word, key) => (
                 <Tr key={key}>
-                  <Td>{word.english}</Td>
-                  <Td>{word.spanish}</Td>
+                  <Td>{word.target}</Td>
+                  <Td>{word.native}</Td>
                 </Tr>
               ))}
             </Tbody>

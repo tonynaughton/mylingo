@@ -1,15 +1,30 @@
 import { useForm } from "react-hook-form";
-import { Button, Input, VStack, Heading, FormControl, FormLabel, FormErrorMessage, useToast } from "@chakra-ui/react";
+import {
+  Button,
+  Input,
+  VStack,
+  Heading,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  useToast,
+  Text,
+  Spinner
+} from "@chakra-ui/react";
 
 import { Layout } from "../layout";
-import { addSavedWord } from "../firebase";
+import { addSavedWord, getLanguageData, WordData } from "../firebase";
+import { useEffect, useState } from "react";
 
 type FormInput = {
-  spanish: string;
-  english: string;
+  native: string;
+  target: string;
 };
 
 export function AddWord(): JSX.Element {
+  const [languageData, setLanguageData] = useState<WordData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const toast = useToast();
   const {
     handleSubmit,
@@ -17,6 +32,17 @@ export function AddWord(): JSX.Element {
     reset,
     formState: { errors, isSubmitting }
   } = useForm<FormInput>();
+
+  useEffect(() => {
+    const getData = async (): Promise<void> => {
+      const data = await getLanguageData();
+      setLanguageData(data);
+    };
+
+    setIsLoading(true);
+    getData();
+    setIsLoading(false);
+  }, []);
 
   const onAddWord = async (wordData: FormInput): Promise<void> => {
     try {
@@ -28,21 +54,30 @@ export function AddWord(): JSX.Element {
     }
   };
 
+  if (isLoading) {
+    return (
+      <VStack spacing={5}>
+        <Text>Fetching data...</Text>
+        <Spinner size="xl" />
+      </VStack>
+    );
+  }
+
   return (
     <Layout>
       <form onSubmit={handleSubmit(onAddWord)} style={{ width: "100%" }}>
         <VStack spacing={5} width="full">
           <Heading>Add Word</Heading>
           <FormControl>
-            <FormLabel>Spanish</FormLabel>
-            <Input id="spanish-word" {...register("spanish", { required: "This is required" })} />
+            <FormLabel htmlFor="target-word">{languageData?.target}</FormLabel>
+            <Input id="target-word" {...register("target", { required: "This is required" })} />
           </FormControl>
-          <FormErrorMessage>{errors.spanish ? errors.spanish.message : ""}</FormErrorMessage>
+          <FormErrorMessage>{errors.native ? errors.native.message : ""}</FormErrorMessage>
           <FormControl>
-            <FormLabel>English</FormLabel>
-            <Input id="english-word" {...register("english", { required: "This is required" })} />
+            <FormLabel htmlFor="native-word">{languageData?.native}</FormLabel>
+            <Input id="native-word" {...register("native", { required: "This is required" })} />
           </FormControl>
-          <FormErrorMessage>{errors.english ? errors.english.message : ""}</FormErrorMessage>
+          <FormErrorMessage>{errors.target ? errors.target.message : ""}</FormErrorMessage>
           <Button width="full" colorScheme="teal" size="lg" isLoading={isSubmitting} type="submit">
             Save
           </Button>

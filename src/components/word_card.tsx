@@ -37,7 +37,7 @@ export function WordCard(): JSX.Element {
 
   const onSubmit = async ({ input }: FormInput): Promise<void> => {
     toast.closeAll();
-    if (input !== activeWord!.spanish) {
+    if (input !== activeWord!.native) {
       toast({ title: "Incorrect", status: "error" });
       return;
     }
@@ -49,7 +49,7 @@ export function WordCard(): JSX.Element {
 
   const onResetClick = (): void => setViewedWords([]);
 
-  const onRevealClick = (): void => setValue("input", activeWord!.spanish);
+  const onRevealClick = (): void => setValue("input", activeWord!.native);
 
   if (isLoading) {
     return (
@@ -77,7 +77,7 @@ export function WordCard(): JSX.Element {
         <Heading as="h2" size="lg">
           Translate the word
         </Heading>
-        <Text fontSize="xl">{activeWord?.english}</Text>
+        <Text fontSize="xl">{activeWord?.target}</Text>
         <Input id="input" {...register("input", { required: "Translation required" })} />
         <Button size="lg" colorScheme="teal" width="full" type="submit">
           Submit

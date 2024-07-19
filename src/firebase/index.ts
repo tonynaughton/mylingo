@@ -18,8 +18,8 @@ import {
 import { RegisterFormInput } from "../pages/register";
 
 export interface WordData {
-  spanish: string;
-  english: string;
+  native: string;
+  target: string;
 }
 
 export interface UserData {
@@ -28,6 +28,8 @@ export interface UserData {
   email: string;
   createdAt: number;
   savedWords: WordData[];
+  nativeLanguage: string;
+  targetLanguage: string;
 }
 
 const firebaseConfig = {
@@ -50,7 +52,13 @@ export const createCollection = <T = DocumentData>(collectionName: string) => {
 
 export const usersCollection = createCollection<UserData>("users");
 
-export async function registerUser({ name, email, password }: RegisterFormInput): Promise<void> {
+export async function registerUser({
+  name,
+  email,
+  password,
+  nativeLanguage,
+  targetLanguage
+}: RegisterFormInput): Promise<void> {
   const {
     user: { uid }
   } = await createUserWithEmailAndPassword(auth, email, password);
@@ -59,7 +67,9 @@ export async function registerUser({ name, email, password }: RegisterFormInput)
     name,
     email,
     createdAt: Date.now(),
-    savedWords: []
+    savedWords: [],
+    nativeLanguage,
+    targetLanguage
   });
 }
 
@@ -106,4 +116,19 @@ export async function getSavedWords(): Promise<WordData[]> {
   const userData = userDoc.data() as UserData;
 
   return userData.savedWords;
+}
+
+export async function getLanguageData(): Promise<WordData> {
+  const { currentUser } = auth;
+
+  if (!currentUser) {
+    throw new Error("No user logged in");
+  }
+
+  const userRef = await getUserRef(currentUser);
+
+  const userDoc = await getDoc(userRef);
+  const { nativeLanguage, targetLanguage } = userDoc.data() as UserData;
+
+  return { native: nativeLanguage, target: targetLanguage };
 }
