@@ -51,8 +51,8 @@ export function MyWords(): JSX.Element {
             <Tbody>
               {savedWords.map((word, key) => (
                 <Tr key={key}>
-                  <Td>{word.target}</Td>
                   <Td>{word.native}</Td>
+                  <Td>{word.target}</Td>
                 </Tr>
               ))}
             </Tbody>
