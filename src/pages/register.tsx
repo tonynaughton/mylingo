@@ -8,8 +8,7 @@ import {
   useToast,
   Link,
   Heading,
-  Text,
-  Select
+  Text
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";

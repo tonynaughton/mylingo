@@ -51,11 +51,11 @@ export function Router(): JSX.Element {
     },
     {
       path: "/login",
-      element: <Login />
+      element: currentUser ? <Home /> : <Login />
     },
     {
       path: "/register",
-      element: <Register />
+      element: currentUser ? <Home /> : <Register />
     }
   ]);
 
