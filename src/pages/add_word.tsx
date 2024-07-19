@@ -15,6 +15,7 @@ import {
 
 import { Layout } from "../layout";
 import { addSavedWord, getLanguageData, WordData } from "../firebase";
+import { getLanguageLabelByCode } from "../util/language";
 
 type FormInput = {
   native: string;
@@ -43,6 +44,9 @@ export function AddWord(): JSX.Element {
     setIsLoading(false);
   }, []);
 
+  const nativeLabel = languageData ? getLanguageLabelByCode(languageData.native) : "";
+  const targetLabel = languageData ? getLanguageLabelByCode(languageData.target) : "";
+
   const onAddWord = async (wordData: FormInput): Promise<void> => {
     try {
       await addSavedWord(wordData);
@@ -70,12 +74,12 @@ export function AddWord(): JSX.Element {
         <VStack spacing={5} width="full">
           <Heading>Add Word</Heading>
           <FormControl>
-            <FormLabel htmlFor="target-word">{languageData?.target}</FormLabel>
+            <FormLabel htmlFor="target-word">{targetLabel}</FormLabel>
             <Input id="target-word" {...register("target", { required: "This is required" })} />
           </FormControl>
           <FormErrorMessage>{errors.native ? errors.native.message : ""}</FormErrorMessage>
           <FormControl>
-            <FormLabel htmlFor="native-word">{languageData?.native}</FormLabel>
+            <FormLabel htmlFor="native-word">{nativeLabel}</FormLabel>
             <Input id="native-word" {...register("native", { required: "This is required" })} />
           </FormControl>
           <FormErrorMessage>{errors.target ? errors.target.message : ""}</FormErrorMessage>

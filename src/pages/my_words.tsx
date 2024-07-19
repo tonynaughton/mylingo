@@ -15,11 +15,12 @@ import {
   useToast,
   Button
 } from "@chakra-ui/react";
-
-import { Layout } from "../layout";
-import { deleteWord, getLanguageData, getSavedWords, WordData } from "../firebase";
 import { CloseIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
+
+import { deleteWord, getLanguageData, getSavedWords, WordData } from "../firebase";
+import { Layout } from "../layout";
+import { getLanguageLabelByCode } from "../util/language";
 
 export function MyWords(): JSX.Element {
   const toast = useToast();
@@ -42,6 +43,9 @@ export function MyWords(): JSX.Element {
     getData();
     setIsLoading(false);
   }, [count]);
+
+  const nativeLabel = languageData ? getLanguageLabelByCode(languageData.native) : "";
+  const targetLabel = languageData ? getLanguageLabelByCode(languageData.target) : "";
 
   const onDeleteWord = async (word: WordData): Promise<void> => {
     try {
@@ -89,8 +93,8 @@ export function MyWords(): JSX.Element {
           <Table width="full" variant="simple">
             <Thead>
               <Tr>
-                <Th>{languageData?.native}</Th>
-                <Th>{languageData?.target}</Th>
+                <Th>{nativeLabel}</Th>
+                <Th>{targetLabel}</Th>
                 <Th>Actions</Th>
               </Tr>
             </Thead>

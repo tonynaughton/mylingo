@@ -8,21 +8,23 @@ import {
   useToast,
   Link,
   Heading,
-  Text
+  Text,
+  Select
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import { registerUser } from "../firebase";
 import { Layout } from "../layout";
+import languages from "../data/languages.json";
 
 export interface RegisterFormInput {
   name: string;
   email: string;
   password: string;
   repeatPassword: string;
-  nativeLanguage: string;
-  targetLanguage: string;
+  nativeCode: string;
+  targetCode: string;
 }
 
 export function Register(): JSX.Element {
@@ -92,16 +94,24 @@ export function Register(): JSX.Element {
               />
             </FormControl>
             <FormErrorMessage>{errors.repeatPassword ? errors.repeatPassword.message : ""}</FormErrorMessage>
-            <FormControl isInvalid={!!errors.nativeLanguage}>
+            <FormControl isInvalid={!!errors.nativeCode}>
               <FormLabel htmlFor="native-language">Native Language</FormLabel>
-              <Input {...register("nativeLanguage", { required: "This is required" })} id="native-language" />
+              <Select {...register("nativeCode", { required: "This is required" })} id="native-language">
+                {languages.map((language) => (
+                  <option value={language.code}>{language.label}</option>
+                ))}
+              </Select>
             </FormControl>
-            <FormErrorMessage>{errors.nativeLanguage ? errors.nativeLanguage.message : ""}</FormErrorMessage>
-            <FormControl isInvalid={!!errors.targetLanguage}>
+            <FormErrorMessage>{errors.nativeCode ? errors.nativeCode.message : ""}</FormErrorMessage>
+            <FormControl isInvalid={!!errors.targetCode}>
               <FormLabel htmlFor="target-language">Target Language</FormLabel>
-              <Input {...register("targetLanguage", { required: "This is required" })} id="target-language" />
+              <Select {...register("targetCode", { required: "This is required" })} id="target-language">
+                {languages.map((language) => (
+                  <option value={language.code}>{language.label}</option>
+                ))}
+              </Select>
             </FormControl>
-            <FormErrorMessage>{errors.targetLanguage ? errors.targetLanguage.message : ""}</FormErrorMessage>
+            <FormErrorMessage>{errors.targetCode ? errors.targetCode.message : ""}</FormErrorMessage>
             <Button w="full" size="lg" isLoading={isSubmitting} type="submit">
               Register
             </Button>

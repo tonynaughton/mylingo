@@ -29,8 +29,8 @@ export interface UserData {
   email: string;
   createdAt: number;
   savedWords: WordData[];
-  nativeLanguage: string;
-  targetLanguage: string;
+  nativeCode: string;
+  targetCode: string;
 }
 
 const firebaseConfig = {
@@ -57,8 +57,8 @@ export async function registerUser({
   name,
   email,
   password,
-  nativeLanguage,
-  targetLanguage
+  nativeCode,
+  targetCode
 }: RegisterFormInput): Promise<void> {
   const {
     user: { uid }
@@ -69,8 +69,8 @@ export async function registerUser({
     email,
     createdAt: Date.now(),
     savedWords: [],
-    nativeLanguage,
-    targetLanguage
+    nativeCode,
+    targetCode
   });
 }
 
@@ -129,9 +129,9 @@ export async function getLanguageData(): Promise<WordData> {
   const userRef = await getUserRef(currentUser);
 
   const userDoc = await getDoc(userRef);
-  const { nativeLanguage, targetLanguage } = userDoc.data() as UserData;
+  const { nativeCode, targetCode } = userDoc.data() as UserData;
 
-  return { native: nativeLanguage, target: targetLanguage };
+  return { native: nativeCode, target: targetCode };
 }
 
 export async function deleteWord(wordData: WordData): Promise<void> {
