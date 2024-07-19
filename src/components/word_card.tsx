@@ -4,61 +4,49 @@ import { useForm } from "react-hook-form";
 
 import { getSavedWords, WordData } from "../firebase";
 
+type FormInput = { input: string };
+
 export function WordCard(): JSX.Element {
-  const toast = useToast();
-  const [activeWord, setActiveWord] = useState<WordData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [savedWords, setSavedWords] = useState<WordData[]>([]);
   const [viewedWords, setViewedWords] = useState<WordData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [noRemainingWords, setNoRemainingWords] = useState(false);
+  const [activeWord, setActiveWord] = useState<WordData | null>(null);
+  const toast = useToast();
+  const { handleSubmit, register, reset } = useForm<FormInput>();
 
-  const { handleSubmit, register, reset } = useForm<{ input: string }>();
-
-  useEffect(() => {
-    async function getData() {
+  useEffect((): void => {
+     const getWords = async () => {
       const savedWords = await getSavedWords();
       setSavedWords(savedWords);
-
-      updateWord();
-
       setIsLoading(false);
-    }
+    };
 
-    getData();
+    getWords();
   }, []);
 
-  function updateWord() {
-    const remainingWords = savedWords.filter((word) => !viewedWords.includes(word));
+  useEffect((): void => {
+    const updateWord = (): void => {
+      const remainingWords = savedWords.filter((word) => !viewedWords.includes(word));
 
-    if (!remainingWords.length) {
-      setNoRemainingWords(true);
+      const randomWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
+      setActiveWord(randomWord);
+    };
+
+    updateWord();
+  }, [viewedWords, savedWords]);
+
+  const onSubmit = async ({ input }: FormInput): Promise<void> => {
+    if (input !== activeWord!.spanish) {
+      toast({ title: "Incorrect", status: "error" });
+      return;
     }
 
-    const randomWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
-    setActiveWord(randomWord);
-    setViewedWords((prevViewedWords) => [...prevViewedWords, randomWord]);
+    toast({ title: "Correct", status: "success"});
+    reset();
+    setViewedWords(prev => ([...prev, activeWord!]));
   }
 
-  async function onTranslationSubmit(translation: { input: string }) {
-    if (translation.input === activeWord?.spanish) {
-      toast({
-        title: "Correct",
-        status: "success",
-        duration: 5000,
-        isClosable: true
-      });
-
-      reset();
-      updateWord();
-    } else {
-      toast({
-        title: "Incorrect",
-        status: "error",
-        duration: 5000,
-        isClosable: true
-      });
-    }
-  }
+  const onResetClick = (): void => setViewedWords([]);
 
   if (isLoading) {
     return (
@@ -69,17 +57,12 @@ export function WordCard(): JSX.Element {
     );
   }
 
-  if (noRemainingWords) {
+  if (viewedWords.length >= savedWords.length) {
     return (
       <VStack spacing={5}>
         <Heading>No words remaining!</Heading>
         <Button
-          onClick={() => {
-            console.log("Reset clicked");
-            setNoRemainingWords(false);
-            setViewedWords([]);
-            updateWord();
-          }}
+          onClick={onResetClick}
           size="lg"
           width="full"
         >
@@ -90,13 +73,13 @@ export function WordCard(): JSX.Element {
   }
 
   return (
-    <form onSubmit={handleSubmit(onTranslationSubmit)} style={{ width: "100%" }}>
+    <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
       <VStack spacing={5} p={5} width="full">
         <Heading as="h2" size="lg">
           Translate the word
         </Heading>
         <Text fontSize="xl">{activeWord?.english}</Text>
-        <Input id="translation-input" {...register("input", { required: "Translation required" })} />
+        <Input id="input" {...register("input", { required: "Translation required" })} />
         <Button size="lg" colorScheme="teal" width="full" type="submit">
           Submit
         </Button>
