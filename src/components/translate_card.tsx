@@ -39,7 +39,7 @@ export function TranslateCard(): JSX.Element {
 
   const onSubmit = async ({ input }: FormInput): Promise<void> => {
     toast.closeAll();
-    if (input !== activeWord!.target) {
+    if (input.toLowerCase() !== activeWord!.target.toLowerCase()) {
       toast({ title: "Incorrect", status: "error" });
       return;
     }
