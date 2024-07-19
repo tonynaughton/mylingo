@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Button,
@@ -14,7 +15,6 @@ import {
 
 import { Layout } from "../layout";
 import { addSavedWord, getLanguageData, WordData } from "../firebase";
-import { useEffect, useState } from "react";
 
 type FormInput = {
   native: string;
@@ -23,7 +23,7 @@ type FormInput = {
 
 export function AddWord(): JSX.Element {
   const [languageData, setLanguageData] = useState<WordData | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const toast = useToast();
   const {
@@ -39,7 +39,6 @@ export function AddWord(): JSX.Element {
       setLanguageData(data);
     };
 
-    setIsLoading(true);
     getData();
     setIsLoading(false);
   }, []);
@@ -56,10 +55,12 @@ export function AddWord(): JSX.Element {
 
   if (isLoading) {
     return (
-      <VStack spacing={5}>
-        <Text>Fetching data...</Text>
-        <Spinner size="xl" />
-      </VStack>
+      <Layout>
+        <VStack spacing={5}>
+          <Text>Fetching data...</Text>
+          <Spinner size="xl" />
+        </VStack>
+      </Layout>
     );
   }
 

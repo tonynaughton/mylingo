@@ -12,7 +12,8 @@ import {
   doc,
   getDoc,
   DocumentReference,
-  updateDoc
+  updateDoc,
+  arrayRemove
 } from "firebase/firestore";
 
 import { RegisterFormInput } from "../pages/register";
@@ -131,4 +132,16 @@ export async function getLanguageData(): Promise<WordData> {
   const { nativeLanguage, targetLanguage } = userDoc.data() as UserData;
 
   return { native: nativeLanguage, target: targetLanguage };
+}
+
+export async function deleteWord(wordData: WordData): Promise<void> {
+  const { currentUser } = auth;
+
+  if (!currentUser) {
+    throw new Error("No user logged in");
+  }
+
+  const userRef = await getUserRef(currentUser);
+
+  await updateDoc(userRef, { savedWords: arrayRemove(wordData) });
 }
