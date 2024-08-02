@@ -13,19 +13,24 @@ import {
 import { useForm } from "react-hook-form";
 
 import { getUserData, Word } from "../firebase";
-import { useNavigate } from "react-router-dom";
+import { ALL_WORDPACKS_KEY } from "../pages";
+
+interface TranslateCardProps {
+  onFinish(): void;
+  selectedWordpackId?: string;
+}
 
 interface TranslateInput {
   translation: string;
 }
 
-export function TranslateCard(): JSX.Element {
+export function TranslateCard({ onFinish, selectedWordpackId }: TranslateCardProps): JSX.Element {
+  const toast = useToast();
+
   const [isLoading, setIsLoading] = useState(false);
   const [words, setWords] = useState<Word[]>([]);
   const [viewedWords, setViewedWords] = useState<Word[]>([]);
   const [activeWord, setActiveWord] = useState<Word | null>(null);
-  const toast = useToast();
-  const navigate = useNavigate();
   const {
     handleSubmit,
     register,
@@ -37,7 +42,13 @@ export function TranslateCard(): JSX.Element {
   useEffect((): void => {
     const getWords = async () => {
       const { words } = await getUserData();
-      setWords(words);
+
+      if (selectedWordpackId === ALL_WORDPACKS_KEY) {
+        setWords(words);
+      }
+
+      const filteredWords = words.filter((word) => word.wordpackId === selectedWordpackId);
+      setWords(filteredWords);
     };
 
     setIsLoading(true);
@@ -68,28 +79,18 @@ export function TranslateCard(): JSX.Element {
     setViewedWords((prev) => [...prev, activeWord!]);
   };
 
-  const onResetClick = (): void => setViewedWords([]);
+  const onFinishClick = (): void => {
+    setViewedWords([]);
+    onFinish();
+  };
 
   const onRevealClick = (): void => setValue("translation", activeWord!.target);
-
-  const onAddWordsClick = (): void => navigate("/add-word");
 
   if (isLoading) {
     return (
       <VStack spacing={5}>
-        <Text>Fetching saved words...</Text>
+        <Text>Fetching words...</Text>
         <Spinner size="xl" />
-      </VStack>
-    );
-  }
-
-  if (!words.length) {
-    return (
-      <VStack spacing={5}>
-        <Heading>No saved words</Heading>
-        <Button onClick={onAddWordsClick} size="lg" width="full">
-          Add Words
-        </Button>
       </VStack>
     );
   }
@@ -98,8 +99,8 @@ export function TranslateCard(): JSX.Element {
     return (
       <VStack spacing={5}>
         <Heading>No words remaining</Heading>
-        <Button onClick={onResetClick} size="lg" width="full">
-          Reset
+        <Button onClick={onFinishClick} size="lg" width="full">
+          Finish
         </Button>
       </VStack>
     );
@@ -108,9 +109,6 @@ export function TranslateCard(): JSX.Element {
   return (
     <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
       <VStack spacing={5} p={5} width="full">
-        <Heading as="h2" size="lg">
-          Translate the word
-        </Heading>
         <Text fontSize="xl">{activeWord?.native}</Text>
         <FormControl>
           <Input id="input" {...register("translation", { required: "Required" })} />
