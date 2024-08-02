@@ -2,24 +2,24 @@ import { useEffect, useState } from "react";
 import { Button, Heading, Input, Spinner, Text, useToast, VStack } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 
-import { getSavedWords, WordData } from "../firebase";
+import { getUserData, Word } from "../firebase";
 import { useNavigate } from "react-router-dom";
 
 type FormInput = { input: string };
 
 export function TranslateCard(): JSX.Element {
   const [isLoading, setIsLoading] = useState(true);
-  const [savedWords, setSavedWords] = useState<WordData[]>([]);
-  const [viewedWords, setViewedWords] = useState<WordData[]>([]);
-  const [activeWord, setActiveWord] = useState<WordData | null>(null);
+  const [words, setWords] = useState<Word[]>([]);
+  const [viewedWords, setViewedWords] = useState<Word[]>([]);
+  const [activeWord, setActiveWord] = useState<Word | null>(null);
   const toast = useToast();
   const navigate = useNavigate();
   const { handleSubmit, register, reset, setValue } = useForm<FormInput>();
 
   useEffect((): void => {
     const getWords = async () => {
-      const savedWords = await getSavedWords();
-      setSavedWords(savedWords);
+      const { words: savedWords } = await getUserData();
+      setWords(savedWords);
       setIsLoading(false);
     };
 
@@ -28,14 +28,14 @@ export function TranslateCard(): JSX.Element {
 
   useEffect((): void => {
     const updateWord = (): void => {
-      const remainingWords = savedWords.filter((word) => !viewedWords.includes(word));
+      const remainingWords = words.filter((word) => !viewedWords.includes(word));
 
       const randomWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
       setActiveWord(randomWord);
     };
 
     updateWord();
-  }, [viewedWords, savedWords]);
+  }, [viewedWords, words]);
 
   const onSubmit = async ({ input }: FormInput): Promise<void> => {
     toast.closeAll();
@@ -64,7 +64,7 @@ export function TranslateCard(): JSX.Element {
     );
   }
 
-  if (!savedWords.length) {
+  if (!words.length) {
     return (
       <VStack spacing={5}>
         <Heading>No saved words</Heading>
@@ -75,7 +75,7 @@ export function TranslateCard(): JSX.Element {
     );
   }
 
-  if (viewedWords.length >= savedWords.length) {
+  if (viewedWords.length >= words.length) {
     return (
       <VStack spacing={5}>
         <Heading>No words remaining</Heading>

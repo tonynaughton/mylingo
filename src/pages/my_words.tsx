@@ -18,36 +18,39 @@ import {
 import { CloseIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 
-import { deleteWord, getLanguageData, getSavedWords, WordData } from "../firebase";
+import { deleteWord, getUserData, Word, WordPack } from "../firebase";
 import { Layout } from "../layout";
 import { getLanguageLabelByCode } from "../util/language";
 
 export function MyWords(): JSX.Element {
   const toast = useToast();
   const navigate = useNavigate();
-  const [languageData, setLanguageData] = useState<WordData | null>(null);
+
+  const [nativeLabel, setNativeLabel] = useState<string | null>(null);
+  const [targetLabel, settargetLabel] = useState<string | null>(null);
+  const [wordPacks, setWordPacks] = useState<WordPack[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [savedWords, setSavedWords] = useState<WordData[]>([]);
+  const [words, setWords] = useState<Word[]>([]);
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    async function getData() {
-      const savedWords = await getSavedWords();
-      setSavedWords(savedWords);
+    const getData = async () => {
+      const { nativeCode, targetCode, wordPacks, words } = await getUserData();
+      const native = getLanguageLabelByCode(nativeCode);
+      const target = getLanguageLabelByCode(targetCode);
 
-      const data = await getLanguageData();
-      setLanguageData(data);
-    }
+      setNativeLabel(native);
+      settargetLabel(target);
+      setWordPacks(wordPacks);
+      setWords(words);
+    };
 
     setIsLoading(true);
     getData();
     setIsLoading(false);
   }, [count]);
 
-  const nativeLabel = languageData ? getLanguageLabelByCode(languageData.native) : "";
-  const targetLabel = languageData ? getLanguageLabelByCode(languageData.target) : "";
-
-  const onDeleteWord = async (word: WordData): Promise<void> => {
+  const onDeleteWord = async (word: Word): Promise<void> => {
     try {
       await deleteWord(word);
       toast({ title: "Word deleted successfully", status: "success" });
@@ -59,7 +62,7 @@ export function MyWords(): JSX.Element {
 
   const onAddWordsClick = (): void => navigate("/add-word");
 
-  if (!savedWords.length) {
+  if (!words.length) {
     return (
       <Layout>
         <VStack spacing={5}>
@@ -99,7 +102,7 @@ export function MyWords(): JSX.Element {
               </Tr>
             </Thead>
             <Tbody>
-              {savedWords.map((word, key) => (
+              {words.map((word, key) => (
                 <Tr key={key}>
                   <Td>{word.native}</Td>
                   <Td>{word.target}</Td>

@@ -10,21 +10,25 @@ import {
   FormErrorMessage,
   useToast,
   Text,
-  Spinner
+  Spinner,
+  Select
 } from "@chakra-ui/react";
 
 import { Layout } from "../layout";
-import { addSavedWord, getLanguageData, WordData } from "../firebase";
+import { addSavedWord, getUserData, WordPack } from "../firebase";
 import { getLanguageLabelByCode } from "../util/language";
 
 type FormInput = {
+  wordPackId: string;
   native: string;
   target: string;
 };
 
 export function AddWord(): JSX.Element {
-  const [languageData, setLanguageData] = useState<WordData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [nativeLabel, setNativeLabel] = useState<string | null>(null);
+  const [targetLabel, settargetLabel] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [wordPacks, setWordPacks] = useState<WordPack[]>([]);
 
   const toast = useToast();
   const {
@@ -36,20 +40,23 @@ export function AddWord(): JSX.Element {
 
   useEffect(() => {
     const getData = async (): Promise<void> => {
-      const data = await getLanguageData();
-      setLanguageData(data);
+      const { nativeCode, targetCode, wordPacks } = await getUserData();
+      const native = getLanguageLabelByCode(nativeCode);
+      const target = getLanguageLabelByCode(targetCode);
+
+      setNativeLabel(native);
+      settargetLabel(target);
+      setWordPacks(wordPacks);
     };
 
+    setIsLoading(true);
     getData();
     setIsLoading(false);
   }, []);
 
-  const nativeLabel = languageData ? getLanguageLabelByCode(languageData.native) : "";
-  const targetLabel = languageData ? getLanguageLabelByCode(languageData.target) : "";
-
   const onAddWord = async (wordData: FormInput): Promise<void> => {
     try {
-      await addSavedWord(wordData);
+      await addSavedWord({ ...wordData, dateAdded: Date.now() });
       toast({ title: "Word saved successfully", status: "success" });
       reset();
     } catch (err: any) {
@@ -73,6 +80,18 @@ export function AddWord(): JSX.Element {
       <form onSubmit={handleSubmit(onAddWord)} style={{ width: "100%" }}>
         <VStack spacing={5} width="full">
           <Heading>Add Word</Heading>
+          <FormControl>
+            <FormLabel htmlFor="wordpack">Wordpack</FormLabel>
+            <Select
+              placeholder="Select a wordpack"
+              {...register("wordPackId", { required: "This is required" })}
+              id="wordpack"
+            >
+              {wordPacks.map((wordpack) => (
+                <option value={wordpack.id}>{wordpack.label}</option>
+              ))}
+            </Select>
+          </FormControl>
           <FormControl>
             <FormLabel htmlFor="target-word">{targetLabel}</FormLabel>
             <Input id="target-word" {...register("target", { required: "This is required" })} />

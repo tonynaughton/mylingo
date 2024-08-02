@@ -18,9 +18,17 @@ import {
 
 import { RegisterFormInput } from "../pages/register";
 
-export interface WordData {
+export interface WordPack {
+  id: string;
+  label: string;
+  dateAdded: number;
+}
+
+export interface Word {
+  wordPackId: string;
   native: string;
   target: string;
+  dateAdded: number;
 }
 
 export interface UserData {
@@ -28,7 +36,8 @@ export interface UserData {
   name: string;
   email: string;
   createdAt: number;
-  savedWords: WordData[];
+  wordPacks: WordPack[];
+  words: Word[];
   nativeCode: string;
   targetCode: string;
 }
@@ -68,7 +77,8 @@ export async function registerUser({
     name,
     email,
     createdAt: Date.now(),
-    savedWords: [],
+    wordPacks: [],
+    words: [],
     nativeCode,
     targetCode
   });
@@ -86,7 +96,7 @@ export async function getUserRef(user: User): Promise<DocumentReference<Document
   return doc(db, "users", userId);
 }
 
-export async function addSavedWord(wordData: WordData): Promise<void> {
+export async function addSavedWord(newWord: Word): Promise<void> {
   const { currentUser } = auth;
 
   if (!currentUser) {
@@ -98,13 +108,13 @@ export async function addSavedWord(wordData: WordData): Promise<void> {
   const userDoc = await getDoc(userRef);
   const userData = userDoc.data() as UserData;
 
-  const savedWords = userData.savedWords;
-  savedWords.push(wordData);
+  const { words } = userData;
+  words.push(newWord);
 
-  await updateDoc(userRef, { savedWords });
+  await updateDoc(userRef, { words });
 }
 
-export async function getSavedWords(): Promise<WordData[]> {
+export async function getUserData(): Promise<UserData> {
   const { currentUser } = auth;
 
   if (!currentUser) {
@@ -114,27 +124,10 @@ export async function getSavedWords(): Promise<WordData[]> {
   const userRef = await getUserRef(currentUser);
 
   const userDoc = await getDoc(userRef);
-  const userData = userDoc.data() as UserData;
-
-  return userData.savedWords;
+  return userDoc.data() as UserData;
 }
 
-export async function getLanguageData(): Promise<WordData> {
-  const { currentUser } = auth;
-
-  if (!currentUser) {
-    throw new Error("No user logged in");
-  }
-
-  const userRef = await getUserRef(currentUser);
-
-  const userDoc = await getDoc(userRef);
-  const { nativeCode, targetCode } = userDoc.data() as UserData;
-
-  return { native: nativeCode, target: targetCode };
-}
-
-export async function deleteWord(wordData: WordData): Promise<void> {
+export async function deleteWord(wordData: Word): Promise<void> {
   const { currentUser } = auth;
 
   if (!currentUser) {
