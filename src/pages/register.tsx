@@ -58,69 +58,64 @@ export function Register(): JSX.Element {
               <Input
                 id="name"
                 {...register("name", {
-                  required: "This is required",
+                  required: "Required",
                   minLength: { value: 4, message: "Minimum length should be 4" }
                 })}
               />
+              <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
             </FormControl>
-            <FormErrorMessage>{errors.name ? errors.name.message : ""}</FormErrorMessage>
             <FormControl isInvalid={!!errors.email}>
               <FormLabel htmlFor="email">Email</FormLabel>
-              <Input
-                autoComplete="email"
-                id="email"
-                type="email"
-                {...register("email", { required: "This is required" })}
-              />
+              <Input autoComplete="email" id="email" type="email" {...register("email", { required: "Required" })} />
+              <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
             </FormControl>
-            <FormErrorMessage>{errors.email ? errors.email.message : ""}</FormErrorMessage>
             <FormControl isInvalid={!!errors.password}>
               <FormLabel htmlFor="password">Password</FormLabel>
               <Input
                 autoComplete="password"
                 type="password"
-                {...register("password", { required: "This is required" })}
+                {...register("password", { required: "Required" })}
                 id="password"
               />
+              <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
             </FormControl>
-            <FormErrorMessage>{errors.password ? errors.password.message : ""}</FormErrorMessage>
             <FormControl isInvalid={!!errors.repeatPassword}>
               <FormLabel htmlFor="repeat-password">Repeat Password</FormLabel>
               <Input
                 autoComplete="repeat-password"
                 type="password"
-                {...register("repeatPassword", { required: "This is required" })}
+                {...register("repeatPassword", { required: "Required" })}
                 id="repeat-password"
               />
+              <FormErrorMessage>{errors.repeatPassword?.message}</FormErrorMessage>
             </FormControl>
-            <FormErrorMessage>{errors.repeatPassword ? errors.repeatPassword.message : ""}</FormErrorMessage>
             <FormControl isInvalid={!!errors.nativeCode}>
               <FormLabel htmlFor="native-language">Native Language</FormLabel>
               <Select
                 placeholder="Select a language"
-                {...register("nativeCode", { required: "This is required" })}
+                {...register("nativeCode", { required: "Required" })}
                 id="native-language"
               >
                 {languages.map((language) => (
                   <option value={language.code}>{language.label}</option>
                 ))}
               </Select>
+              <FormErrorMessage>{errors.nativeCode?.message}</FormErrorMessage>
             </FormControl>
-            <FormErrorMessage>{errors.nativeCode ? errors.nativeCode.message : ""}</FormErrorMessage>
             <FormControl isInvalid={!!errors.targetCode}>
               <FormLabel htmlFor="target-language">Target Language</FormLabel>
               <Select
                 placeholder="Select a language"
                 autoComplete=""
-                {...register("targetCode", { required: "This is required" })}
+                {...register("targetCode", { required: "Required" })}
                 id="target-language"
               >
                 {languages.map((language) => (
                   <option value={language.code}>{language.label}</option>
                 ))}
               </Select>
+              <FormErrorMessage>{errors.targetCode?.message}</FormErrorMessage>
             </FormControl>
-            <FormErrorMessage>{errors.targetCode ? errors.targetCode.message : ""}</FormErrorMessage>
             <Button w="full" size="lg" isLoading={isSubmitting} type="submit">
               Register
             </Button>

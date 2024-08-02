@@ -36,11 +36,11 @@ export function MyWords(): JSX.Element {
   useEffect(() => {
     const getData = async () => {
       const { nativeCode, targetCode, wordPacks, words } = await getUserData();
-      const native = getLanguageLabelByCode(nativeCode);
-      const target = getLanguageLabelByCode(targetCode);
+      const nativeLabel = getLanguageLabelByCode(nativeCode);
+      const targetLabel = getLanguageLabelByCode(targetCode);
 
-      setNativeLabel(native);
-      settargetLabel(target);
+      setNativeLabel(nativeLabel);
+      settargetLabel(targetLabel);
       setWordPacks(wordPacks);
       setWords(words);
     };

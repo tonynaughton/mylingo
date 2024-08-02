@@ -18,11 +18,11 @@ import { Layout } from "../layout";
 import { addSavedWord, getUserData, WordPack } from "../firebase";
 import { getLanguageLabelByCode } from "../util/language";
 
-type FormInput = {
+interface AddWordInput {
   wordPackId: string;
   native: string;
   target: string;
-};
+}
 
 export function AddWord(): JSX.Element {
   const [nativeLabel, setNativeLabel] = useState<string | null>(null);
@@ -36,16 +36,16 @@ export function AddWord(): JSX.Element {
     register,
     reset,
     formState: { errors, isSubmitting }
-  } = useForm<FormInput>();
+  } = useForm<AddWordInput>();
 
   useEffect(() => {
     const getData = async (): Promise<void> => {
       const { nativeCode, targetCode, wordPacks } = await getUserData();
-      const native = getLanguageLabelByCode(nativeCode);
-      const target = getLanguageLabelByCode(targetCode);
+      const nativeLabel = getLanguageLabelByCode(nativeCode);
+      const targetLabel = getLanguageLabelByCode(targetCode);
 
-      setNativeLabel(native);
-      settargetLabel(target);
+      setNativeLabel(nativeLabel);
+      settargetLabel(targetLabel);
       setWordPacks(wordPacks);
     };
 
@@ -54,7 +54,7 @@ export function AddWord(): JSX.Element {
     setIsLoading(false);
   }, []);
 
-  const onAddWord = async (wordData: FormInput): Promise<void> => {
+  const onAddWord = async (wordData: AddWordInput): Promise<void> => {
     try {
       await addSavedWord({ ...wordData, dateAdded: Date.now() });
       toast({ title: "Word saved successfully", status: "success" });
@@ -80,28 +80,25 @@ export function AddWord(): JSX.Element {
       <form onSubmit={handleSubmit(onAddWord)} style={{ width: "100%" }}>
         <VStack spacing={5} width="full">
           <Heading>Add Word</Heading>
-          <FormControl>
+          <FormControl isInvalid={!!errors.wordPackId}>
             <FormLabel htmlFor="wordpack">Wordpack</FormLabel>
-            <Select
-              placeholder="Select a wordpack"
-              {...register("wordPackId", { required: "This is required" })}
-              id="wordpack"
-            >
+            <Select placeholder="Select a wordpack" {...register("wordPackId", { required: "Required" })} id="wordpack">
               {wordPacks.map((wordpack) => (
                 <option value={wordpack.id}>{wordpack.label}</option>
               ))}
             </Select>
+            <FormErrorMessage>{errors.wordPackId?.message}</FormErrorMessage>
           </FormControl>
-          <FormControl>
+          <FormControl isInvalid={!!errors.target}>
             <FormLabel htmlFor="target-word">{targetLabel}</FormLabel>
-            <Input id="target-word" {...register("target", { required: "This is required" })} />
+            <Input id="target-word" {...register("target", { required: "Required" })} />
+            <FormErrorMessage>{errors.target?.message}</FormErrorMessage>
           </FormControl>
-          <FormErrorMessage>{errors.native ? errors.native.message : ""}</FormErrorMessage>
-          <FormControl>
+          <FormControl isInvalid={!!errors.native}>
             <FormLabel htmlFor="native-word">{nativeLabel}</FormLabel>
-            <Input id="native-word" {...register("native", { required: "This is required" })} />
+            <Input id="native-word" {...register("native", { required: "Required" })} />
+            <FormErrorMessage>{errors.native?.message}</FormErrorMessage>
           </FormControl>
-          <FormErrorMessage>{errors.target ? errors.target.message : ""}</FormErrorMessage>
           <Button width="full" colorScheme="teal" size="lg" isLoading={isSubmitting} type="submit">
             Save
           </Button>

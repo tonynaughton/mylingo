@@ -17,10 +17,10 @@ import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { Layout } from "../layout";
 
-type FormInput = {
+interface LoginInput {
   email: string;
   password: string;
-};
+}
 
 export function Login(): JSX.Element {
   const toast = useToast();
@@ -29,9 +29,9 @@ export function Login(): JSX.Element {
     handleSubmit,
     register,
     formState: { errors, isSubmitting }
-  } = useForm<FormInput>();
+  } = useForm<LoginInput>();
 
-  const onLogin = async ({ email, password }: FormInput): Promise<void> => {
+  const onLogin = async ({ email, password }: LoginInput): Promise<void> => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       toast({ title: "Login successful", status: "success" });
@@ -50,23 +50,14 @@ export function Login(): JSX.Element {
           <VStack w="full" spacing={3}>
             <FormControl isInvalid={!!errors.email}>
               <FormLabel htmlFor="email">Email</FormLabel>
-              <Input
-                autoComplete="email"
-                id="email"
-                type="email"
-                {...register("email", { required: "This is required" })}
-              />
+              <Input autoComplete="email" id="email" type="email" {...register("email", { required: "Required" })} />
+              <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
             </FormControl>
-            <FormErrorMessage>{errors.email ? errors.email.message : ""}</FormErrorMessage>
             <FormControl isInvalid={!!errors.password}>
               <FormLabel htmlFor="password">Password</FormLabel>
-              <Input
-                autoComplete="password"
-                type="password"
-                {...register("password", { required: "This is required" })}
-              />
+              <Input autoComplete="password" type="password" {...register("password", { required: "Required" })} />
+              <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
             </FormControl>
-            <FormErrorMessage>{errors.password ? errors.password.message : ""}</FormErrorMessage>
             <Button w="full" size="lg" isLoading={isSubmitting} type="submit">
               Login
             </Button>

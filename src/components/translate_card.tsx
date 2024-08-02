@@ -1,29 +1,48 @@
 import { useEffect, useState } from "react";
-import { Button, Heading, Input, Spinner, Text, useToast, VStack } from "@chakra-ui/react";
+import {
+  Button,
+  FormControl,
+  FormErrorMessage,
+  Heading,
+  Input,
+  Spinner,
+  Text,
+  useToast,
+  VStack
+} from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 
 import { getUserData, Word } from "../firebase";
 import { useNavigate } from "react-router-dom";
 
-type FormInput = { input: string };
+interface TranslateInput {
+  translation: string;
+}
 
 export function TranslateCard(): JSX.Element {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [words, setWords] = useState<Word[]>([]);
   const [viewedWords, setViewedWords] = useState<Word[]>([]);
   const [activeWord, setActiveWord] = useState<Word | null>(null);
   const toast = useToast();
   const navigate = useNavigate();
-  const { handleSubmit, register, reset, setValue } = useForm<FormInput>();
+  const {
+    handleSubmit,
+    register,
+    reset,
+    setValue,
+    formState: { errors }
+  } = useForm<TranslateInput>();
 
   useEffect((): void => {
     const getWords = async () => {
-      const { words: savedWords } = await getUserData();
-      setWords(savedWords);
-      setIsLoading(false);
+      const { words } = await getUserData();
+      setWords(words);
     };
 
+    setIsLoading(true);
     getWords();
+    setIsLoading(false);
   }, []);
 
   useEffect((): void => {
@@ -37,7 +56,7 @@ export function TranslateCard(): JSX.Element {
     updateWord();
   }, [viewedWords, words]);
 
-  const onSubmit = async ({ input }: FormInput): Promise<void> => {
+  const onSubmit = async ({ translation: input }: TranslateInput): Promise<void> => {
     toast.closeAll();
     if (input.toLowerCase() !== activeWord!.target.toLowerCase()) {
       toast({ title: "Incorrect", status: "error" });
@@ -51,7 +70,7 @@ export function TranslateCard(): JSX.Element {
 
   const onResetClick = (): void => setViewedWords([]);
 
-  const onRevealClick = (): void => setValue("input", activeWord!.target);
+  const onRevealClick = (): void => setValue("translation", activeWord!.target);
 
   const onAddWordsClick = (): void => navigate("/add-word");
 
@@ -93,7 +112,10 @@ export function TranslateCard(): JSX.Element {
           Translate the word
         </Heading>
         <Text fontSize="xl">{activeWord?.native}</Text>
-        <Input id="input" {...register("input", { required: "Translation required" })} />
+        <FormControl>
+          <Input id="input" {...register("translation", { required: "Required" })} />
+          <FormErrorMessage>{errors.translation?.message}</FormErrorMessage>
+        </FormControl>
         <Button size="lg" colorScheme="teal" width="full" type="submit">
           Submit
         </Button>
