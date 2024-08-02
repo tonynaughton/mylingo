@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 
 export interface AddWordpackInput {
   title: string;
-  description?: string;
 }
 
 export function AddWordpack(): JSX.Element {
@@ -39,11 +38,6 @@ export function AddWordpack(): JSX.Element {
             <FormLabel htmlFor="target-word">Title</FormLabel>
             <Input id="target-word" {...register("title", { required: "Required" })} />
             <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={!!errors.description}>
-            <FormLabel htmlFor="native-word">Description (optional)</FormLabel>
-            <Input id="native-word" {...register("description")} />
-            <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
           </FormControl>
           <Button width="full" colorScheme="teal" size="lg" isLoading={isSubmitting} type="submit">
             Save

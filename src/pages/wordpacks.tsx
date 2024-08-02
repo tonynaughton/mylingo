@@ -109,7 +109,6 @@ export function Wordpacks(): JSX.Element {
                 <Thead>
                   <Tr>
                     <Th>Title</Th>
-                    <Th>Description</Th>
                     <Th>Count</Th>
                     <Th>Actions</Th>
                   </Tr>
@@ -118,7 +117,6 @@ export function Wordpacks(): JSX.Element {
                   {wordpacks.map((wordpack, key) => (
                     <Tr key={key}>
                       <Td>{wordpack.title}</Td>
-                      <Td>{wordpack.description}</Td>
                       <Td>{countsByWordpackId[wordpack.id] || 0}</Td>
                       <Td>
                         <IconButton

@@ -25,7 +25,6 @@ export interface Wordpack {
   id: string;
   title: string;
   dateAdded: number;
-  description?: string;
 }
 
 export interface Word {
