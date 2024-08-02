@@ -1,15 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Button,
-  FormControl,
-  FormErrorMessage,
-  Heading,
-  Input,
-  Spinner,
-  Text,
-  useToast,
-  VStack
-} from "@chakra-ui/react";
+import { Button, FormControl, FormErrorMessage, Input, Spinner, Text, useToast, VStack } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 
 import { getUserData, Word } from "../firebase";
@@ -27,7 +17,7 @@ interface TranslateInput {
 export function TranslateCard({ onFinish, selectedWordpackId }: TranslateCardProps): JSX.Element {
   const toast = useToast();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [words, setWords] = useState<Word[]>([]);
   const [viewedWords, setViewedWords] = useState<Word[]>([]);
   const [activeWord, setActiveWord] = useState<Word | null>(null);
@@ -41,19 +31,22 @@ export function TranslateCard({ onFinish, selectedWordpackId }: TranslateCardPro
 
   useEffect((): void => {
     const getWords = async () => {
-      const { words } = await getUserData();
+      setIsLoading(true);
+      try {
+        const { words } = await getUserData();
 
-      if (selectedWordpackId === ALL_WORDPACKS_KEY) {
-        setWords(words);
+        if (selectedWordpackId === ALL_WORDPACKS_KEY) {
+          setWords(words);
+        } else {
+          const filteredWords = words.filter((word) => word.wordpackId === selectedWordpackId);
+          setWords(filteredWords);
+        }
+      } finally {
+        setIsLoading(false);
       }
-
-      const filteredWords = words.filter((word) => word.wordpackId === selectedWordpackId);
-      setWords(filteredWords);
     };
 
-    setIsLoading(true);
     getWords();
-    setIsLoading(false);
   }, []);
 
   useEffect((): void => {
@@ -88,7 +81,7 @@ export function TranslateCard({ onFinish, selectedWordpackId }: TranslateCardPro
 
   if (isLoading) {
     return (
-      <VStack spacing={5}>
+      <VStack spacing={5} width="full">
         <Text>Fetching words...</Text>
         <Spinner size="xl" />
       </VStack>
@@ -97,8 +90,8 @@ export function TranslateCard({ onFinish, selectedWordpackId }: TranslateCardPro
 
   if (viewedWords.length >= words.length) {
     return (
-      <VStack spacing={5}>
-        <Heading>No words remaining</Heading>
+      <VStack spacing={5} width="full">
+        <Text>No words remaining</Text>
         <Button onClick={onFinishClick} size="lg" width="full">
           Finish
         </Button>

@@ -36,7 +36,7 @@ export function AllWords(): JSX.Element {
   const [nativeLabel, setNativeLabel] = useState<string | null>(null);
   const [targetLabel, settargetLabel] = useState<string | null>(null);
   const [wordpacks, setWordpacks] = useState<Wordpack[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [words, setWords] = useState<Word[]>([]);
   const [count, setCount] = useState(0);
 
@@ -48,19 +48,22 @@ export function AllWords(): JSX.Element {
 
   useEffect(() => {
     const getData = async () => {
-      const { nativeCode, targetCode, wordpacks, words } = await getUserData();
-      const nativeLabel = getLanguageLabelByCode(nativeCode);
-      const targetLabel = getLanguageLabelByCode(targetCode);
+      setIsLoading(true);
+      try {
+        const { nativeCode, targetCode, wordpacks, words } = await getUserData();
+        const nativeLabel = getLanguageLabelByCode(nativeCode);
+        const targetLabel = getLanguageLabelByCode(targetCode);
 
-      setNativeLabel(nativeLabel);
-      settargetLabel(targetLabel);
-      setWordpacks(wordpacks);
-      setWords(words);
+        setNativeLabel(nativeLabel);
+        settargetLabel(targetLabel);
+        setWordpacks(wordpacks);
+        setWords(words);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    setIsLoading(true);
     getData();
-    setIsLoading(false);
   }, [count]);
 
   const onDeleteWord = async (): Promise<void> => {

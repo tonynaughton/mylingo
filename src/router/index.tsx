@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 
 import { Translate, Login, Register, AddWord, AllWords, Wordpacks } from "../pages";
 import { ProtectedRoute } from "./protected_route";
@@ -68,11 +68,11 @@ export function Router(): JSX.Element {
     },
     {
       path: "/login",
-      element: currentUser ? <Translate /> : <Login />
+      element: currentUser ? <Navigate to="/translate" replace /> : <Login />
     },
     {
       path: "/register",
-      element: currentUser ? <Translate /> : <Register />
+      element: currentUser ? <Navigate to="/translate" replace /> : <Register />
     }
   ]);
 

@@ -10,20 +10,23 @@ export const ALL_WORDPACKS_KEY = "ALL_WORDPACKS";
 export function Translate(): JSX.Element {
   const navigate = useNavigate();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isStarted, setIsStarted] = useState(false);
   const [wordpacks, setWordpacks] = useState<Wordpack[]>([]);
   const [selectedWordpackId, setSelectedWordpackId] = useState<string>(ALL_WORDPACKS_KEY);
 
   useEffect((): void => {
     const getData = async () => {
-      const { wordpacks } = await getUserData();
-      setWordpacks(wordpacks);
+      setIsLoading(true);
+      try {
+        const { wordpacks } = await getUserData();
+        setWordpacks(wordpacks);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    setIsLoading(true);
     getData();
-    setIsLoading(false);
   }, []);
 
   const wordpackOptions: { title: string; value: string }[] = [
@@ -36,7 +39,7 @@ export function Translate(): JSX.Element {
   const renderContent = (): JSX.Element => {
     if (isLoading) {
       return (
-        <VStack spacing={5}>
+        <VStack spacing={5} width="full">
           <Text>Fetching data...</Text>
           <Spinner size="xl" />
         </VStack>
@@ -45,7 +48,7 @@ export function Translate(): JSX.Element {
 
     if (!wordpacks.length) {
       return (
-        <VStack spacing={5}>
+        <VStack spacing={5} width="full">
           <Text>No wordpacks added yet</Text>
           <Button onClick={onAddWordpackClick} size="lg" width="full">
             Add Wordpack

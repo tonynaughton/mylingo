@@ -35,7 +35,7 @@ export function Login(): JSX.Element {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       toast({ title: "Login successful", status: "success" });
-      navigate("/");
+      navigate("/translate");
     } catch (err: any) {
       toast({ title: "Login failed", description: err.message, status: "error" });
     }

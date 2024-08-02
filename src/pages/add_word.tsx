@@ -31,7 +31,7 @@ export function AddWord(): JSX.Element {
 
   const [nativeLabel, setNativeLabel] = useState<string | null>(null);
   const [targetLabel, settargetLabel] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [wordpacks, setWordpacks] = useState<Wordpack[]>([]);
 
   const toast = useToast();
@@ -44,18 +44,21 @@ export function AddWord(): JSX.Element {
 
   useEffect(() => {
     const getData = async (): Promise<void> => {
-      const { nativeCode, targetCode, wordpacks } = await getUserData();
-      const nativeLabel = getLanguageLabelByCode(nativeCode);
-      const targetLabel = getLanguageLabelByCode(targetCode);
+      setIsLoading(true);
+      try {
+        const { nativeCode, targetCode, wordpacks } = await getUserData();
+        const nativeLabel = getLanguageLabelByCode(nativeCode);
+        const targetLabel = getLanguageLabelByCode(targetCode);
 
-      setNativeLabel(nativeLabel);
-      settargetLabel(targetLabel);
-      setWordpacks(wordpacks);
+        setNativeLabel(nativeLabel);
+        settargetLabel(targetLabel);
+        setWordpacks(wordpacks);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    setIsLoading(true);
     getData();
-    setIsLoading(false);
   }, []);
 
   const onAddWord = async (input: AddWordInput): Promise<void> => {

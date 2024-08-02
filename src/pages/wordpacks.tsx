@@ -20,9 +20,10 @@ import {
   AlertDialogHeader,
   AlertDialogOverlay
 } from "@chakra-ui/react";
+import _ from "lodash";
 import { Layout } from "../layout";
 import { useEffect, useState, useRef } from "react";
-import { deleteWordpack, getUserData, Wordpack } from "../firebase";
+import { deleteWordpack, getUserData, Word, Wordpack } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { CloseIcon } from "@chakra-ui/icons";
 
@@ -31,22 +32,29 @@ export function Wordpacks(): JSX.Element {
   const navigate = useNavigate();
 
   const [wordpacks, setWordpacks] = useState<Wordpack[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [words, setWords] = useState<Word[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [count, setCount] = useState(0);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedWordpack, setSelectedWordpack] = useState<Wordpack | null>(null);
   const cancelRef = useRef<HTMLButtonElement | null>(null);
 
+  const countsByWordpackId = _.countBy(words, "wordpackId");
+
   useEffect(() => {
     const getData = async () => {
-      const { wordpacks } = await getUserData();
-      setWordpacks(wordpacks);
+      setIsLoading(true);
+      try {
+        const { wordpacks, words } = await getUserData();
+        setWordpacks(wordpacks);
+        setWords(words);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    setIsLoading(true);
     getData();
-    setIsLoading(false);
   }, [count]);
 
   const onDeleteWordpack = async (): Promise<void> => {
@@ -102,6 +110,8 @@ export function Wordpacks(): JSX.Element {
                   <Tr>
                     <Th>Title</Th>
                     <Th>Description</Th>
+                    <Th>Count</Th>
+                    <Th>Actions</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -109,6 +119,7 @@ export function Wordpacks(): JSX.Element {
                     <Tr key={key}>
                       <Td>{wordpack.title}</Td>
                       <Td>{wordpack.description}</Td>
+                      <Td>{countsByWordpackId[wordpack.id] || 0}</Td>
                       <Td>
                         <IconButton
                           colorScheme="red"
