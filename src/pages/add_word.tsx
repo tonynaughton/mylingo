@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 
 import { Layout } from "../layout";
-import { addSavedWord, getUserData, WordPack } from "../firebase";
+import { addSavedWord, getUserData, Wordpack } from "../firebase";
 import { getLanguageLabelByCode } from "../util/language";
 
 interface AddWordInput {
@@ -28,7 +28,7 @@ export function AddWord(): JSX.Element {
   const [nativeLabel, setNativeLabel] = useState<string | null>(null);
   const [targetLabel, settargetLabel] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [wordPacks, setWordPacks] = useState<WordPack[]>([]);
+  const [wordPacks, setWordPacks] = useState<Wordpack[]>([]);
 
   const toast = useToast();
   const {
@@ -84,7 +84,7 @@ export function AddWord(): JSX.Element {
             <FormLabel htmlFor="wordpack">Wordpack</FormLabel>
             <Select placeholder="Select a wordpack" {...register("wordPackId", { required: "Required" })} id="wordpack">
               {wordPacks.map((wordpack) => (
-                <option value={wordpack.id}>{wordpack.label}</option>
+                <option value={wordpack.id}>{wordpack.title}</option>
               ))}
             </Select>
             <FormErrorMessage>{errors.wordPackId?.message}</FormErrorMessage>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import { Translate, Login, Register, AddWord, MyWords } from "../pages";
+import { Translate, Login, Register, AddWord, AllWords, Wordpacks } from "../pages";
 import { ProtectedRoute } from "./protected_route";
 import { auth } from "../firebase";
 
@@ -42,10 +42,18 @@ export function Router(): JSX.Element {
       )
     },
     {
-      path: "/my-words",
+      path: "/wordpacks",
       element: (
         <ProtectedRoute user={currentUser}>
-          <MyWords />
+          <Wordpacks />
+        </ProtectedRoute>
+      )
+    },
+    {
+      path: "/all-words",
+      element: (
+        <ProtectedRoute user={currentUser}>
+          <AllWords />
         </ProtectedRoute>
       )
     },

@@ -26,8 +26,11 @@ export function AppBar(): JSX.Element {
           <MenuItem color="black" onClick={() => navigate("/")}>
             Translate
           </MenuItem>
-          <MenuItem color="black" onClick={() => navigate("/my-words")}>
-            My Words
+          <MenuItem color="black" onClick={() => navigate("/wordpacks")}>
+            Wordpacks
+          </MenuItem>
+          <MenuItem color="black" onClick={() => navigate("/all-words")}>
+            All Words
           </MenuItem>
           <MenuItem color="black" onClick={() => navigate("/add-word")}>
             Add Word

@@ -18,9 +18,10 @@ import {
 
 import { RegisterFormInput } from "../pages/register";
 
-export interface WordPack {
+export interface Wordpack {
   id: string;
-  label: string;
+  title: string;
+  description: string;
   dateAdded: number;
 }
 
@@ -36,7 +37,7 @@ export interface UserData {
   name: string;
   email: string;
   createdAt: number;
-  wordPacks: WordPack[];
+  wordPacks: Wordpack[];
   words: Word[];
   nativeCode: string;
   targetCode: string;

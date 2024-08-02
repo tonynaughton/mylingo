@@ -18,17 +18,17 @@ import {
 import { CloseIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 
-import { deleteWord, getUserData, Word, WordPack } from "../firebase";
+import { deleteWord, getUserData, Word, Wordpack } from "../firebase";
 import { Layout } from "../layout";
 import { getLanguageLabelByCode } from "../util/language";
 
-export function MyWords(): JSX.Element {
+export function AllWords(): JSX.Element {
   const toast = useToast();
   const navigate = useNavigate();
 
   const [nativeLabel, setNativeLabel] = useState<string | null>(null);
   const [targetLabel, settargetLabel] = useState<string | null>(null);
-  const [wordPacks, setWordPacks] = useState<WordPack[]>([]);
+  const [wordPacks, setWordPacks] = useState<Wordpack[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [words, setWords] = useState<Word[]>([]);
   const [count, setCount] = useState(0);
@@ -90,7 +90,7 @@ export function MyWords(): JSX.Element {
     <Layout>
       <VStack spacing={5} maxHeight="100%" width="full">
         <Heading as="h2" size="lg">
-          My Words
+          All Words
         </Heading>
         <TableContainer width="full" overflowY="auto">
           <Table width="full" variant="simple">
