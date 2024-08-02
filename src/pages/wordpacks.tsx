@@ -34,6 +34,8 @@ export function Wordpacks(): JSX.Element {
     setIsLoading(false);
   }, []);
 
+  console.log("🚀 ~ file: wordpacks.tsx:29 ~ wordpacks:", wordpacks);
+
   const onAddWordpack = (): void => navigate("/add-wordpack");
 
   if (isLoading) {

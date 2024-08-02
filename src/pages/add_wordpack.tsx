@@ -3,6 +3,7 @@ import { Button, Input, VStack, Heading, FormControl, FormLabel, FormErrorMessag
 
 import { Layout } from "../layout";
 import { addWordpack } from "../firebase";
+import { useNavigate } from "react-router-dom";
 
 export interface AddWordpackInput {
   title: string;
@@ -10,21 +11,22 @@ export interface AddWordpackInput {
 }
 
 export function AddWordpack(): JSX.Element {
+  const navigate = useNavigate();
+
   const toast = useToast();
   const {
     handleSubmit,
     register,
-    reset,
     formState: { errors, isSubmitting }
   } = useForm<AddWordpackInput>();
 
   const onAddWordpack = async (input: AddWordpackInput): Promise<void> => {
     try {
       await addWordpack(input);
-      toast({ title: "Word saved successfully", status: "success" });
-      reset();
+      toast({ title: "Wordpack added successfully", status: "success" });
+      navigate("/wordpacks");
     } catch (err: any) {
-      toast({ title: "Failed to save word", description: err.message, status: "error" });
+      toast({ title: "Failed to add wordpack", description: err.message, status: "error" });
     }
   };
 
@@ -39,7 +41,7 @@ export function AddWordpack(): JSX.Element {
             <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
           </FormControl>
           <FormControl isInvalid={!!errors.description}>
-            <FormLabel htmlFor="native-word">Description</FormLabel>
+            <FormLabel htmlFor="native-word">Description (optional)</FormLabel>
             <Input id="native-word" {...register("description")} />
             <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
           </FormControl>

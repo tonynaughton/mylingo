@@ -96,8 +96,10 @@ export function Register(): JSX.Element {
                 {...register("nativeCode", { required: "Required" })}
                 id="native-language"
               >
-                {languages.map((language) => (
-                  <option value={language.code}>{language.label}</option>
+                {languages.map((language, key) => (
+                  <option key={key} value={language.code}>
+                    {language.label}
+                  </option>
                 ))}
               </Select>
               <FormErrorMessage>{errors.nativeCode?.message}</FormErrorMessage>
@@ -110,8 +112,10 @@ export function Register(): JSX.Element {
                 {...register("targetCode", { required: "Required" })}
                 id="target-language"
               >
-                {languages.map((language) => (
-                  <option value={language.code}>{language.label}</option>
+                {languages.map((language, key) => (
+                  <option key={key} value={language.code}>
+                    {language.label}
+                  </option>
                 ))}
               </Select>
               <FormErrorMessage>{errors.targetCode?.message}</FormErrorMessage>

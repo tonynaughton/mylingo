@@ -28,7 +28,7 @@ export function AddWord(): JSX.Element {
   const [nativeLabel, setNativeLabel] = useState<string | null>(null);
   const [targetLabel, settargetLabel] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [wordPacks, setWordPacks] = useState<Wordpack[]>([]);
+  const [wordpacks, setWordpacks] = useState<Wordpack[]>([]);
 
   const toast = useToast();
   const {
@@ -40,13 +40,13 @@ export function AddWord(): JSX.Element {
 
   useEffect(() => {
     const getData = async (): Promise<void> => {
-      const { nativeCode, targetCode, wordpacks: wordPacks } = await getUserData();
+      const { nativeCode, targetCode, wordpacks } = await getUserData();
       const nativeLabel = getLanguageLabelByCode(nativeCode);
       const targetLabel = getLanguageLabelByCode(targetCode);
 
       setNativeLabel(nativeLabel);
       settargetLabel(targetLabel);
-      setWordPacks(wordPacks);
+      setWordpacks(wordpacks);
     };
 
     setIsLoading(true);
@@ -83,8 +83,10 @@ export function AddWord(): JSX.Element {
           <FormControl isInvalid={!!errors.wordpackId}>
             <FormLabel htmlFor="wordpack">Wordpack</FormLabel>
             <Select placeholder="Select a wordpack" {...register("wordpackId", { required: "Required" })} id="wordpack">
-              {wordPacks.map((wordpack) => (
-                <option value={wordpack.id}>{wordpack.title}</option>
+              {wordpacks.map((wordpack, key) => (
+                <option key={key} value={wordpack.id}>
+                  {wordpack.title}
+                </option>
               ))}
             </Select>
             <FormErrorMessage>{errors.wordpackId?.message}</FormErrorMessage>

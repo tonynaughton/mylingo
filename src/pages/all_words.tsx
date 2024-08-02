@@ -28,20 +28,20 @@ export function AllWords(): JSX.Element {
 
   const [nativeLabel, setNativeLabel] = useState<string | null>(null);
   const [targetLabel, settargetLabel] = useState<string | null>(null);
-  const [wordPacks, setWordPacks] = useState<Wordpack[]>([]);
+  const [wordpacks, setWordpacks] = useState<Wordpack[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [words, setWords] = useState<Word[]>([]);
   const [count, setCount] = useState(0);
 
   useEffect(() => {
     const getData = async () => {
-      const { nativeCode, targetCode, wordpacks: wordPacks, words } = await getUserData();
+      const { nativeCode, targetCode, wordpacks, words } = await getUserData();
       const nativeLabel = getLanguageLabelByCode(nativeCode);
       const targetLabel = getLanguageLabelByCode(targetCode);
 
       setNativeLabel(nativeLabel);
       settargetLabel(targetLabel);
-      setWordPacks(wordPacks);
+      setWordpacks(wordpacks);
       setWords(words);
     };
 

@@ -120,10 +120,10 @@ export async function addWordpack(wordpack: AddWordpackInput): Promise<void> {
   const userDoc = await getDoc(userRef);
   const userData = userDoc.data() as UserData;
 
-  const { wordpacks: wordPacks } = userData;
-  wordPacks.push({ ...wordpack, dateAdded: Date.now(), id: _.uniqueId() });
+  const { wordpacks } = userData;
+  wordpacks.push({ ...wordpack, dateAdded: Date.now(), id: _.uniqueId() });
 
-  await updateDoc(userRef, { wordPacks });
+  await updateDoc(userRef, { wordpacks });
 }
 
 export async function addWord(input: AddWordInput): Promise<void> {

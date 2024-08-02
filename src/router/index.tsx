@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Translate, Login, Register, AddWord, AllWords, Wordpacks } from "../pages";
 import { ProtectedRoute } from "./protected_route";
 import { auth } from "../firebase";
+import { AddWordpack } from "../pages/add_wordpack";
 
 export function Router(): JSX.Element {
   const [currentUser, setCurrentUser] = useState(auth.currentUser);
@@ -46,6 +47,14 @@ export function Router(): JSX.Element {
       element: (
         <ProtectedRoute user={currentUser}>
           <Wordpacks />
+        </ProtectedRoute>
+      )
+    },
+    {
+      path: "/add-wordpack",
+      element: (
+        <ProtectedRoute user={currentUser}>
+          <AddWordpack />
         </ProtectedRoute>
       )
     },
