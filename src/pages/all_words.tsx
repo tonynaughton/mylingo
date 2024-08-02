@@ -115,7 +115,7 @@ export function AllWords(): JSX.Element {
                     <IconButton
                       colorScheme="red"
                       size="xs"
-                      aria-label={`delete-${word.native}`}
+                      aria-label={`delete-${word.id}`}
                       isRound
                       icon={<CloseIcon />}
                       onClick={() => onDeleteWord(word)}

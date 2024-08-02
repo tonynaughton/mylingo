@@ -10,18 +10,23 @@ import {
   Tr,
   VStack,
   Text,
-  Button
+  Button,
+  useToast,
+  IconButton
 } from "@chakra-ui/react";
 import { Layout } from "../layout";
 import { useEffect, useState } from "react";
-import { getUserData, Wordpack } from "../firebase";
+import { deleteWordpack, getUserData, Wordpack } from "../firebase";
 import { useNavigate } from "react-router-dom";
+import { CloseIcon } from "@chakra-ui/icons";
 
 export function Wordpacks(): JSX.Element {
+  const toast = useToast();
   const navigate = useNavigate();
 
   const [wordpacks, setWordpacks] = useState<Wordpack[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     const getData = async () => {
@@ -32,9 +37,17 @@ export function Wordpacks(): JSX.Element {
     setIsLoading(true);
     getData();
     setIsLoading(false);
-  }, []);
+  }, [count]);
 
-  console.log("🚀 ~ file: wordpacks.tsx:29 ~ wordpacks:", wordpacks);
+  const onDeleteWordpack = async (wordpack: Wordpack): Promise<void> => {
+    try {
+      await deleteWordpack(wordpack);
+      toast({ title: "Wordpack deleted successfully", status: "success" });
+      setCount((prev) => prev + 1);
+    } catch (err: any) {
+      toast({ title: "Failed to delete wordpack", status: "error", description: err.message });
+    }
+  };
 
   const onAddWordpack = (): void => navigate("/add-wordpack");
 
@@ -67,10 +80,20 @@ export function Wordpacks(): JSX.Element {
                 </Tr>
               </Thead>
               <Tbody>
-                {wordpacks.map((wordPack, key) => (
+                {wordpacks.map((wordpack, key) => (
                   <Tr key={key}>
-                    <Td>{wordPack.title}</Td>
-                    <Td>{wordPack.description}</Td>
+                    <Td>{wordpack.title}</Td>
+                    <Td>{wordpack.description}</Td>
+                    <Td>
+                      <IconButton
+                        colorScheme="red"
+                        size="xs"
+                        aria-label={`delete-${wordpack.id}`}
+                        isRound
+                        icon={<CloseIcon />}
+                        onClick={() => onDeleteWordpack(wordpack)}
+                      />
+                    </Td>
                   </Tr>
                 ))}
               </Tbody>
