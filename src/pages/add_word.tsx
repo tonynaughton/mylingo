@@ -15,11 +15,11 @@ import {
 } from "@chakra-ui/react";
 
 import { Layout } from "../layout";
-import { addSavedWord, getUserData, Wordpack } from "../firebase";
+import { addWord, getUserData, Wordpack } from "../firebase";
 import { getLanguageLabelByCode } from "../util/language";
 
-interface AddWordInput {
-  wordPackId: string;
+export interface AddWordInput {
+  wordpackId: string;
   native: string;
   target: string;
 }
@@ -40,7 +40,7 @@ export function AddWord(): JSX.Element {
 
   useEffect(() => {
     const getData = async (): Promise<void> => {
-      const { nativeCode, targetCode, wordPacks } = await getUserData();
+      const { nativeCode, targetCode, wordpacks: wordPacks } = await getUserData();
       const nativeLabel = getLanguageLabelByCode(nativeCode);
       const targetLabel = getLanguageLabelByCode(targetCode);
 
@@ -54,9 +54,9 @@ export function AddWord(): JSX.Element {
     setIsLoading(false);
   }, []);
 
-  const onAddWord = async (wordData: AddWordInput): Promise<void> => {
+  const input = async (wordData: AddWordInput): Promise<void> => {
     try {
-      await addSavedWord({ ...wordData, dateAdded: Date.now() });
+      await addWord(wordData);
       toast({ title: "Word saved successfully", status: "success" });
       reset();
     } catch (err: any) {
@@ -77,17 +77,17 @@ export function AddWord(): JSX.Element {
 
   return (
     <Layout>
-      <form onSubmit={handleSubmit(onAddWord)} style={{ width: "100%" }}>
+      <form onSubmit={handleSubmit(input)} style={{ width: "100%" }}>
         <VStack spacing={5} width="full">
           <Heading>Add Word</Heading>
-          <FormControl isInvalid={!!errors.wordPackId}>
+          <FormControl isInvalid={!!errors.wordpackId}>
             <FormLabel htmlFor="wordpack">Wordpack</FormLabel>
-            <Select placeholder="Select a wordpack" {...register("wordPackId", { required: "Required" })} id="wordpack">
+            <Select placeholder="Select a wordpack" {...register("wordpackId", { required: "Required" })} id="wordpack">
               {wordPacks.map((wordpack) => (
                 <option value={wordpack.id}>{wordpack.title}</option>
               ))}
             </Select>
-            <FormErrorMessage>{errors.wordPackId?.message}</FormErrorMessage>
+            <FormErrorMessage>{errors.wordpackId?.message}</FormErrorMessage>
           </FormControl>
           <FormControl isInvalid={!!errors.target}>
             <FormLabel htmlFor="target-word">{targetLabel}</FormLabel>

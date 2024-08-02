@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { createUserWithEmailAndPassword, getAuth, User } from "firebase/auth";
+import _ from "lodash";
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import {
   getFirestore,
   CollectionReference,
@@ -17,16 +18,19 @@ import {
 } from "firebase/firestore";
 
 import { RegisterFormInput } from "../pages/register";
+import { AddWordpackInput } from "../pages/add_wordpack";
+import { AddWordInput } from "../pages";
 
 export interface Wordpack {
   id: string;
   title: string;
-  description: string;
   dateAdded: number;
+  description?: string;
 }
 
 export interface Word {
-  wordPackId: string;
+  id: string;
+  wordpackId: string;
   native: string;
   target: string;
   dateAdded: number;
@@ -37,7 +41,7 @@ export interface UserData {
   name: string;
   email: string;
   createdAt: number;
-  wordPacks: Wordpack[];
+  wordpacks: Wordpack[];
   words: Word[];
   nativeCode: string;
   targetCode: string;
@@ -78,15 +82,21 @@ export async function registerUser({
     name,
     email,
     createdAt: Date.now(),
-    wordPacks: [],
+    wordpacks: [],
     words: [],
     nativeCode,
     targetCode
   });
 }
 
-export async function getUserRef(user: User): Promise<DocumentReference<DocumentData>> {
-  const userQuery = query(usersCollection, where("uid", "==", user.uid));
+async function getUserRef(): Promise<DocumentReference<DocumentData>> {
+  const { currentUser } = auth;
+
+  if (!currentUser) {
+    throw new Error("No user logged in");
+  }
+
+  const userQuery = query(usersCollection, where("uid", "==", currentUser.uid));
   const { docs } = await getDocs(userQuery);
 
   if (!docs.length) {
@@ -97,45 +107,39 @@ export async function getUserRef(user: User): Promise<DocumentReference<Document
   return doc(db, "users", userId);
 }
 
-export async function addSavedWord(newWord: Word): Promise<void> {
-  const { currentUser } = auth;
-
-  if (!currentUser) {
-    throw new Error("No user logged in");
-  }
-
-  const userRef = await getUserRef(currentUser);
-
-  const userDoc = await getDoc(userRef);
-  const userData = userDoc.data() as UserData;
-
-  const { words } = userData;
-  words.push(newWord);
-
-  await updateDoc(userRef, { words });
-}
-
 export async function getUserData(): Promise<UserData> {
-  const { currentUser } = auth;
-
-  if (!currentUser) {
-    throw new Error("No user logged in");
-  }
-
-  const userRef = await getUserRef(currentUser);
+  const userRef = await getUserRef();
 
   const userDoc = await getDoc(userRef);
   return userDoc.data() as UserData;
 }
 
+export async function addWordpack(wordpack: AddWordpackInput): Promise<void> {
+  const userRef = await getUserRef();
+
+  const userDoc = await getDoc(userRef);
+  const userData = userDoc.data() as UserData;
+
+  const { wordpacks: wordPacks } = userData;
+  wordPacks.push({ ...wordpack, dateAdded: Date.now(), id: _.uniqueId() });
+
+  await updateDoc(userRef, { wordPacks });
+}
+
+export async function addWord(input: AddWordInput): Promise<void> {
+  const userRef = await getUserRef();
+
+  const userDoc = await getDoc(userRef);
+  const userData = userDoc.data() as UserData;
+
+  const { words } = userData;
+  words.push({ ...input, dateAdded: Date.now(), id: _.uniqueId() });
+
+  await updateDoc(userRef, { words });
+}
+
 export async function deleteWord(wordData: Word): Promise<void> {
-  const { currentUser } = auth;
-
-  if (!currentUser) {
-    throw new Error("No user logged in");
-  }
-
-  const userRef = await getUserRef(currentUser);
+  const userRef = await getUserRef();
 
   await updateDoc(userRef, { savedWords: arrayRemove(wordData) });
 }

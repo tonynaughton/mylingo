@@ -25,8 +25,8 @@ export function Wordpacks(): JSX.Element {
 
   useEffect(() => {
     const getData = async () => {
-      const { wordPacks } = await getUserData();
-      setWordpacks(wordPacks);
+      const { wordpacks } = await getUserData();
+      setWordpacks(wordpacks);
     };
 
     setIsLoading(true);
