@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import _ from "lodash";
 import {
   VStack,
   Text,
@@ -32,6 +33,8 @@ export function AllWords(): JSX.Element {
   const [isLoading, setIsLoading] = useState(false);
   const [words, setWords] = useState<Word[]>([]);
   const [count, setCount] = useState(0);
+
+  const wordpacksById = _.keyBy(wordpacks, "id");
 
   useEffect(() => {
     const getData = async () => {
@@ -98,6 +101,7 @@ export function AllWords(): JSX.Element {
               <Tr>
                 <Th>{nativeLabel}</Th>
                 <Th>{targetLabel}</Th>
+                <Th>Wordpack</Th>
                 <Th>Actions</Th>
               </Tr>
             </Thead>
@@ -106,6 +110,7 @@ export function AllWords(): JSX.Element {
                 <Tr key={key}>
                   <Td>{word.native}</Td>
                   <Td>{word.target}</Td>
+                  <Td>{wordpacksById[word.wordpackId].title}</Td>
                   <Td>
                     <IconButton
                       colorScheme="red"
