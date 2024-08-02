@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import {
   VStack,
@@ -14,7 +14,13 @@ import {
   Td,
   IconButton,
   useToast,
-  Button
+  Button,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay
 } from "@chakra-ui/react";
 import { CloseIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
@@ -33,6 +39,10 @@ export function AllWords(): JSX.Element {
   const [isLoading, setIsLoading] = useState(false);
   const [words, setWords] = useState<Word[]>([]);
   const [count, setCount] = useState(0);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedWord, setSelectedWord] = useState<Word | null>(null);
+  const cancelRef = useRef<HTMLButtonElement | null>(null);
 
   const wordpacksById = _.keyBy(wordpacks, "id");
 
@@ -53,14 +63,28 @@ export function AllWords(): JSX.Element {
     setIsLoading(false);
   }, [count]);
 
-  const onDeleteWord = async (word: Word): Promise<void> => {
+  const onDeleteWord = async (): Promise<void> => {
     try {
-      await deleteWord(word);
-      toast({ title: "Word deleted successfully", status: "success" });
-      setCount((prev) => prev + 1);
+      if (selectedWord) {
+        await deleteWord(selectedWord);
+        toast({ title: "Word deleted successfully", status: "success" });
+        setCount((prev) => prev + 1);
+      }
     } catch (err: any) {
       toast({ title: "Failed to delete word", status: "error", description: err.message });
+    } finally {
+      setIsDialogOpen(false);
     }
+  };
+
+  const onOpenDialog = (word: Word): void => {
+    setSelectedWord(word);
+    setIsDialogOpen(true);
+  };
+
+  const onCloseDialog = (): void => {
+    setSelectedWord(null);
+    setIsDialogOpen(false);
   };
 
   const onAddWordsClick = (): void => navigate("/add-word");
@@ -90,43 +114,65 @@ export function AllWords(): JSX.Element {
   }
 
   return (
-    <Layout>
-      <VStack spacing={5} maxHeight="100%" width="full">
-        <Heading as="h2" size="lg">
-          All Words
-        </Heading>
-        <TableContainer width="full" overflowY="auto">
-          <Table width="full" variant="simple">
-            <Thead>
-              <Tr>
-                <Th>{nativeLabel}</Th>
-                <Th>{targetLabel}</Th>
-                <Th>Wordpack</Th>
-                <Th>Actions</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {words.map((word, key) => (
-                <Tr key={key}>
-                  <Td>{word.native}</Td>
-                  <Td>{word.target}</Td>
-                  <Td>{wordpacksById[word.wordpackId].title}</Td>
-                  <Td>
-                    <IconButton
-                      colorScheme="red"
-                      size="xs"
-                      aria-label={`delete-${word.id}`}
-                      isRound
-                      icon={<CloseIcon />}
-                      onClick={() => onDeleteWord(word)}
-                    />
-                  </Td>
+    <>
+      <Layout>
+        <VStack spacing={5} maxHeight="100%" width="full">
+          <Heading as="h2" size="lg">
+            All Words
+          </Heading>
+          <TableContainer width="full" overflowY="auto">
+            <Table width="full" variant="simple">
+              <Thead>
+                <Tr>
+                  <Th>{nativeLabel}</Th>
+                  <Th>{targetLabel}</Th>
+                  <Th>Wordpack</Th>
+                  <Th>Actions</Th>
                 </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </TableContainer>
-      </VStack>
-    </Layout>
+              </Thead>
+              <Tbody>
+                {words.map((word, key) => (
+                  <Tr key={key}>
+                    <Td>{word.native}</Td>
+                    <Td>{word.target}</Td>
+                    <Td>{wordpacksById[word.wordpackId]?.title || "N/A"}</Td>
+                    <Td>
+                      <IconButton
+                        colorScheme="red"
+                        size="xs"
+                        aria-label={`delete-${word.id}`}
+                        isRound
+                        icon={<CloseIcon />}
+                        onClick={() => onOpenDialog(word)}
+                      />
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </TableContainer>
+        </VStack>
+      </Layout>
+      <AlertDialog isOpen={isDialogOpen} leastDestructiveRef={cancelRef} onClose={onCloseDialog}>
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete Word
+            </AlertDialogHeader>
+
+            <AlertDialogBody>Are you sure you want to delete this word?</AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onCloseDialog}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={onDeleteWord} ml={3}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+    </>
   );
 }

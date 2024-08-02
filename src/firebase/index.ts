@@ -141,7 +141,13 @@ export async function addWord(input: AddWordInput): Promise<void> {
 export async function deleteWordpack(wordpack: Wordpack): Promise<void> {
   const userRef = await getUserRef();
 
+  const userDoc = await getDoc(userRef);
+  const { words } = userDoc.data() as UserData;
+
+  const filteredWords = words.filter((word) => word.wordpackId !== wordpack.id);
+
   await updateDoc(userRef, { wordpacks: arrayRemove(wordpack) });
+  await updateDoc(userRef, { words: filteredWords });
 }
 
 export async function deleteWord(word: Word): Promise<void> {
