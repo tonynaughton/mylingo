@@ -11,12 +11,14 @@ import {
   useToast,
   Text,
   Spinner,
-  Select
+  Select,
+  Flex
 } from "@chakra-ui/react";
 
 import { Layout } from "../layout";
 import { addWord, getUserData, Wordpack } from "../firebase";
 import { getLanguageLabelByCode } from "../util/language";
+import { useNavigate } from "react-router-dom";
 
 export interface AddWordInput {
   wordpackId: string;
@@ -25,6 +27,8 @@ export interface AddWordInput {
 }
 
 export function AddWord(): JSX.Element {
+  const navigate = useNavigate();
+
   const [nativeLabel, setNativeLabel] = useState<string | null>(null);
   const [targetLabel, settargetLabel] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -54,15 +58,17 @@ export function AddWord(): JSX.Element {
     setIsLoading(false);
   }, []);
 
-  const input = async (wordData: AddWordInput): Promise<void> => {
+  const onAddWord = async (input: AddWordInput): Promise<void> => {
     try {
-      await addWord(wordData);
+      await addWord(input);
       toast({ title: "Word saved successfully", status: "success" });
       reset();
     } catch (err: any) {
       toast({ title: "Failed to save word", description: err.message, status: "error" });
     }
   };
+
+  const onAddWordpack = (): void => navigate("/add-wordpack");
 
   if (isLoading) {
     return (
@@ -77,18 +83,21 @@ export function AddWord(): JSX.Element {
 
   return (
     <Layout>
-      <form onSubmit={handleSubmit(input)} style={{ width: "100%" }}>
+      <form onSubmit={handleSubmit(onAddWord)} style={{ width: "100%" }}>
         <VStack spacing={5} width="full">
           <Heading>Add Word</Heading>
           <FormControl isInvalid={!!errors.wordpackId}>
             <FormLabel htmlFor="wordpack">Wordpack</FormLabel>
-            <Select placeholder="Select a wordpack" {...register("wordpackId", { required: "Required" })} id="wordpack">
-              {wordpacks.map((wordpack, key) => (
-                <option key={key} value={wordpack.id}>
-                  {wordpack.title}
-                </option>
-              ))}
-            </Select>
+            <Flex gap={2}>
+              <Select placeholder="Select wordpack" {...register("wordpackId", { required: "Required" })} id="wordpack">
+                {wordpacks.map((wordpack, key) => (
+                  <option key={key} value={wordpack.id}>
+                    {wordpack.title}
+                  </option>
+                ))}
+              </Select>
+              <Button onClick={onAddWordpack}>Add</Button>
+            </Flex>
             <FormErrorMessage>{errors.wordpackId?.message}</FormErrorMessage>
           </FormControl>
           <FormControl isInvalid={!!errors.target}>

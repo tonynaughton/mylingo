@@ -140,7 +140,7 @@ export function AllWords(): JSX.Element {
                       <IconButton
                         colorScheme="red"
                         size="xs"
-                        aria-label={`delete-${word.id}`}
+                        aria-label={`Delete word ${word.id}`}
                         isRound
                         icon={<CloseIcon />}
                         onClick={() => onOpenDialog(word)}

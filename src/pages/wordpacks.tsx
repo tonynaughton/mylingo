@@ -113,7 +113,7 @@ export function Wordpacks(): JSX.Element {
                         <IconButton
                           colorScheme="red"
                           size="xs"
-                          aria-label={`delete-${wordpack.id}`}
+                          aria-label={`Delete wordpack ${wordpack.id}`}
                           isRound
                           icon={<CloseIcon />}
                           onClick={() => onOpenDialog(wordpack)}
@@ -139,7 +139,9 @@ export function Wordpacks(): JSX.Element {
             </AlertDialogHeader>
 
             <AlertDialogBody>
-              Are you sure you want to delete this wordpack? This will also delete all the words added to the wordpack.
+              Are you sure you want to delete '{selectedWordpack?.title}'?
+              <br />
+              <br /> <b>This will also delete all words added to this wordpack.</b>
             </AlertDialogBody>
 
             <AlertDialogFooter>
